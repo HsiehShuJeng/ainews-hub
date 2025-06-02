@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025年5月大型語言模型互動報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #FDFBF8;
+            color: #374151;
+        }
+        .tab-active {
+            border-bottom-color: #818CF8;
+            color: #4338CA;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-bottom-color: transparent;
+            color: #6B7280;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            max-width: 90%;
+            width: 56rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slide-up 0.3s ease-out;
+        }
+        @keyframes slide-up {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .trend-card {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .trend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tech-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #F9FAFB;
+            border-radius: 0.5rem;
+            border: 1px dashed #D1D5DB;
+        }
+        .tech-diagram-box {
+            background-color: white;
+            border: 1px solid #E5E7EB;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .tech-diagram-arrow {
+            font-size: 1.5rem;
+            color: #9CA3AF;
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">2025年5月大型語言模型(LLM)發展報告</h1>
+            <p class="mt-3 text-lg text-gray-600 max-w-3xl mx-auto">一份互動式報告，深入解析本月開源與閉源模型的最新動態、效能比較與技術趨勢。</p>
+        </header>
+
+        <nav class="border-b border-gray-200 mb-8">
+            <ul class="flex flex-wrap -mb-px justify-center text-sm font-medium text-center">
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg" data-tab="dashboard">📊 總覽儀表板</button>
+                </li>
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg" data-tab="explorer">🔍 模型探索器</button>
+                </li>
+                <li class="mr-2">
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg" data-tab="performance">📈 效能比較</button>
+                </li>
+                <li>
+                    <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg" data-tab="trends">💡 技術趨勢</button>
+                </li>
+            </ul>
+        </nav>
+
+        <main>
+            <div id="dashboard" class="content-tab">
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-700 mb-4 text-center">本月核心趨勢</h2>
+                     <p class="text-center text-gray-500 mb-8 max-w-4xl mx-auto">2025 年 5 月是大型語言模型發展的關鍵月份，呈現了四大核心趨勢。這些趨勢不僅推動了技術前沿，也為未來的應用開創了新的可能性。您可以點擊下方的卡片來探索相關的模型。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="trend-card p-6 rounded-lg cursor-pointer" data-filter-tag="代理能力">
+                            <div class="text-3xl mb-3">🤖</div>
+                            <h3 class="font-bold text-lg text-gray-800">代理能力崛起</h3>
+                            <p class="text-gray-600 mt-2 text-sm">AI 從被動工具轉變為主動的「虛擬隊友」，能自主執行複雜的多步驟任務。</p>
+                        </div>
+                        <div class="trend-card p-6 rounded-lg cursor-pointer" data-filter-tag="多模態">
+                            <div class="text-3xl mb-3">🎬</div>
+                            <h3 class="font-bold text-lg text-gray-800">多模態成標配</h3>
+                            <p class="text-gray-600 mt-2 text-sm">頂尖模型普遍整合文字、圖像、音訊和影片處理能力，互動更自然。</p>
+                        </div>
+                        <div class="trend-card p-6 rounded-lg cursor-pointer" data-filter-tag="增強推理">
+                            <div class="text-3xl mb-3">🧠</div>
+                            <h3 class="font-bold text-lg text-gray-800">增強推理機制</h3>
+                            <p class="text-gray-600 mt-2 text-sm">透過「深度思考」等新技術，提升模型在複雜問題上的邏輯推理深度與可靠性。</p>
+                        </div>
+                        <div class="trend-card p-6 rounded-lg cursor-pointer" data-filter-tag="專業化">
+                            <div class="text-3xl mb-3">🛠️</div>
+                            <h3 class="font-bold text-lg text-gray-800">專業化與泛用化並行</h3>
+                            <p class="text-gray-600 mt-2 text-sm">除了通用大模型，針對程式編寫、手語翻譯等特定領域的高效能模型也蓬勃發展。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="mt-12">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center">2025年5月模型發布時間軸</h2>
+                     <div id="timeline" class="relative border-l-2 border-indigo-200 ml-6">
+                        </div>
+                </section>
+            </div>
+
+            <div id="explorer" class="content-tab hidden">
+                <p class="text-center text-gray-500 mb-8 max-w-4xl mx-auto">本區域讓您深入探索 2025 年 5 月發布的各個大型語言模型。您可以使用上方的篩選器，依據公司、模型類型或核心能力來尋找特定模型，並點擊卡片查看詳細資訊。</p>
+                <div id="filters" class="flex flex-wrap justify-center gap-2 mb-8">
+                    </div>
+                <div id="model-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    </div>
+                 <div id="no-results" class="text-center py-12 text-gray-500 hidden">
+                    <p class="text-xl">無符合條件的模型</p>
+                    <p class="mt-2">請嘗試調整您的篩選條件。</p>
+                </div>
+            </div>
+
+            <div id="performance" class="content-tab hidden">
+                 <p class="text-center text-gray-500 mb-8 max-w-4xl mx-auto">在此，您可以互動式地比較不同模型在各項關鍵基準測試上的表現。請從下拉式選單中選擇一個基準測試，圖表將會動態更新，以視覺化方式呈現各模型在該項目的分數或排名。</p>
+                <div class="flex justify-center mb-6">
+                    <select id="benchmark-selector" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full max-w-xs p-2.5">
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performance-chart"></canvas>
+                </div>
+            </div>
+
+            <div id="trends" class="content-tab hidden">
+                 <p class="text-center text-gray-500 mb-8 max-w-4xl mx-auto">本節深入剖析 2025 年 5 月出現的關鍵技術創新。我們將複雜的架構概念，如 AI 代理和增強推理機制，轉化為簡單的視覺化圖表，幫助您快速理解其運作原理和核心價值。</p>
+                 <div class="space-y-12 max-w-4xl mx-auto">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">趨勢一：AI 代理架構</h3>
+                        <p class="text-gray-600 mb-4">AI 代理不再只是單純的語言模型，而是整合了多種工具的複雜系統。它接收使用者指令後，由核心模型（大腦）進行規劃，並調用如程式碼執行器、網路瀏覽器等工具來完成任務，最終提供完整的解決方案。</p>
+                        <div class="tech-diagram flex-col sm:flex-row">
+                           <div class="tech-diagram-box">用戶指令</div>
+                           <div class="tech-diagram-arrow hidden sm:block">→</div>
+                           <div class="tech-diagram-arrow block sm:hidden my-2">↓</div>
+                           <div class="tech-diagram-box bg-indigo-100 border-indigo-300">代理核心 (LLM)</div>
+                           <div class="tech-diagram-arrow hidden sm:block">→</div>
+                           <div class="tech-diagram-arrow block sm:hidden my-2">↓</div>
+                           <div class="space-y-2">
+                             <div class="tech-diagram-box text-sm">工具1: 程式碼執行</div>
+                             <div class="tech-diagram-box text-sm">工具2: 網路搜尋</div>
+                             <div class="tech-diagram-box text-sm">工具3: 圖像生成</div>
+                           </div>
+                           <div class="tech-diagram-arrow hidden sm:block">→</div>
+                           <div class="tech-diagram-arrow block sm:hidden my-2">↓</div>
+                           <div class="tech-diagram-box">完成任務</div>
+                        </div>
+                    </div>
+                     <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">趨勢二：增強推理機制 (以 "Deep Think" 為例)</h3>
+                        <p class="text-gray-600 mb-4">為了解決複雜問題，模型不再只遵循單一路徑思考。增強推理機制允許模型在回應前，平行探索多種可能的假設或解決方案，並從中選擇最佳路徑。這大幅提高了在數學、科學和程式設計等領域的準確性。</p>
+                        <div class="tech-diagram flex-col sm:flex-row">
+                           <div class="tech-diagram-box">複雜問題</div>
+                           <div class="tech-diagram-arrow hidden sm:block">→</div>
+                           <div class="tech-diagram-arrow block sm:hidden my-2">↓</div>
+                           <div class="tech-diagram-box bg-indigo-100 border-indigo-300">
+                                <p>思考預算</p>
+                                <div class="mt-2 space-y-2">
+                                    <div class="tech-diagram-box text-sm bg-white">假設 A → 評估</div>
+                                    <div class="tech-diagram-box text-sm bg-white">假設 B → 評估</div>
+                                    <div class="tech-diagram-box text-sm bg-white">假設 C → 評估</div>
+                                </div>
+                           </div>
+                           <div class="tech-diagram-arrow hidden sm:block">→</div>
+                           <div class="tech-diagram-arrow block sm:hidden my-2">↓</div>
+                           <div class="tech-diagram-box">最佳解</div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-container" class="hidden"></div>
+
+    <script>
+        const llmData = {
+            models: [
+                {
+                    id: 'gpt4.1', name: 'OpenAI GPT-4.1', company: 'OpenAI', type: '閉源', releaseDate: '2025-05-14',
+                    tags: ['程式編寫', '指令遵循', '企業應用', '多模態'],
+                    summary: 'OpenAI 於2025年5月中旬推出的 GPT-4 系列新版模型，在程式編碼與指令遵循能力上有明顯改進，針對企業用戶和開發者優化。',
+                    details: {
+                        '模型大小與架構': '具備與GPT-4相當的超大參數量(GPT-4o 推測超過1750億參數), 採用 Transformer 架構。提供標準版和縮小版 GPT-4.1 mini。',
+                        '訓練資料與方法': '推測基於 GPT-4 基礎上進行強化(可能透過大規模程式碼與指令資料微調)。OpenAI並未公開詳細訓練資料與過程。',
+                        '模型能力與用途': '程式編碼與指令遵循能力改進，強大對話和多輪推理能力，可用於問答、內容生成、輔助程式開發。支援多模態輸入(圖像、文字)與大上下文窗口。',
+                        '效能與基準': '官方表示在開發者體驗上更進一步，對程式編寫問題的表現更強。內部測試顯示其在編碼與遵循指令的準確性上優於GPT-4o。TechCrunch報導稱有「顯著提升」。',
+                        '技術創新': '強調無監督學習規模擴展並提升實用性。專注於模式匹配與大數據知識，而非刻意的逐步思考。企業應用中提供更精細控制。',
+                        '官方來源': 'OpenAI 博客與幫助中心 (2025-05-14)，TechCrunch等媒體報導'
+                    }
+                },
+                {
+                    id: 'codex', name: 'OpenAI Codex', company: 'OpenAI', type: '閉源', releaseDate: '2025-05-16',
+                    tags: ['代理能力', '程式編寫'],
+                    summary: '一個基於雲端的 AI 程式編寫代理，旨在成為開發者的「虛擬同事」，能獨立完成複雜的軟體工程任務。',
+                    details: {
+                        '模型大小與架構': '使用特製模型 `codex-1`（源自 o3 架構），在沙盒虛擬環境中運行，支援長達 30 分鐘的擴展會話。',
+                        '訓練資料與方法': '透過強化學習在真實程式編寫任務中訓練，以產生符合人類風格和偏好的程式碼，並能反覆運行測試直至通過。',
+                        '模型能力與用途': '解決查詢、修復錯誤、編寫新功能、測試和程式碼庫分析。能將自然語言提示轉換為程式碼，並提出附有驗證日誌的拉取請求。支援多個程式編寫任務並行處理。',
+                        '官方來源': 'OpenAI News (Introducing Codex), Turing.com, Cosmico.org'
+                    }
+                },
+                {
+                    id: 'operator', name: 'OpenAI Operator (o3)', company: 'OpenAI', type: '閉源', releaseDate: '2025-05-23',
+                    tags: ['代理能力', '網頁互動'],
+                    summary: '一個 AI 代理模型（基於o3模型更新），能模擬人類操作與網頁互動，執行填寫表單、預訂旅行等任務。',
+                    details: {
+                        '模型大小與架構': '基於強邏輯推理能力的 OpenAI o3 模型，是電腦使用代理（CUA）模型的應用產品。',
+                        '訓練資料與方法': '經過額外的電腦使用安全資料微調，教導模型確認和拒絕決策邊界。',
+                        '模型能力與用途': '執行網路任務，如填寫表單、預訂旅行、創建迷因。o3 版本增強了處理登入、彈出視窗和 CAPTCHA 的能力，提升瀏覽互動的持久性與準確性。',
+                        '官方來源': 'OpenAI News (o3-o4-mini system card addendum), OpenAI Help Center'
+                    }
+                },
+                {
+                    id: 'gpt4.5', name: 'OpenAI GPT-4.5', company: 'OpenAI', type: '閉源', releaseDate: '2025-05-01',
+                    tags: ['多模態', '對話'],
+                    summary: 'OpenAI 曾被認為最大且最適合聊天的模型，具備多模態能力。注意：實際發布於2月，5月為持續討論期，`gpt-4.5-preview` API 已計劃棄用。',
+                    details: {
+                        '模型大小與架構': '參數未公開，但前代超過 1750 億。專注於無監督學習，而非思維鏈推理。',
+                        '訓練資料與方法': '專有，未公開。',
+                        '模型能力與用途': '卓越的對話、多步驟推理、高效計算和即時互動。可處理圖像和音訊資料。推薦用於需要卓越對話、多步驟推理的業務場景。',
+                        '官方來源': 'Shakudo.io blog, OpenAI API Deprecations'
+                    }
+                },
+                {
+                    id: 'gemini2.5pro_io', name: 'Gemini 2.5 Pro I/O Edition', company: 'Google', type: '閉源', releaseDate: '2025-05-20',
+                    tags: ['程式編寫', '多模態', '網頁開發', '影片理解'],
+                    summary: '專為程式編寫和互動式網頁應用增強的模型，在 WebDev Arena 排行榜上排名第一，並具備頂尖的影片理解能力。上下文視窗擴展至200萬token。',
+                    details: {
+                        '模型大小與架構': '專有模型，建立在 Gemini 2.5 Pro 基礎上。上下文視窗從 100 萬 token 擴展至 200 萬。',
+                        '訓練資料與方法': '未詳細說明。針對程式編寫和互動式網頁應用進行顯著增強。',
+                        '模型能力與用途': '創建美觀且功能正常的網頁應用、轉換和編輯現有程式碼、開發複雜代理工作流程、基於影片內容創建互動應用。函數呼叫改進。',
+                        '官方來源': 'Google Cloud Blog (Expanding Gemini 2.5 Flash and Pro capabilities)'
+                    }
+                },
+                 {
+                    id: 'gemini2.5pro_deepthink', name: 'Gemini 2.5 Pro with "Deep Think"', company: 'Google', type: '閉源', releaseDate: '2025-05-21',
+                    tags: ['增強推理', '程式編寫', '數學'],
+                    summary: 'Gemini 2.5 Pro 的增強版，採用「Deep Think」技術（平行思考），在回應前能考慮多種假設，顯著提升複雜問題的推理能力。',
+                    details: {
+                        '模型大小與架構': '專有模型，採用新的研究技術，包含平行思考技術。可配置高達 32K token 的思考預算。上下文窗口100萬token。',
+                        '訓練資料與方法': '未詳細說明。針對複雜推理進行強化。',
+                        '模型能力與用途': '針對數學和程式編寫等高度複雜的用例，增強推理能力，處理更複雜的問題和任務。內建自我事實檢查機制。',
+                        '官方來源': 'Google Cloud Blog, Google DeepMind Blog (Gemini model thinking updates)'
+                    }
+                },
+                {
+                    id: 'gemini_flash', name: 'Gemini 2.5 Flash', company: 'Google', type: '閉源', releaseDate: '2025-05-21',
+                    tags: ['效率', '成本效益', '多模態'],
+                    summary: 'Gemini 的更快、更具成本效益的變體，專為需要快速回應和低延遲的應用場景優化。上下文窗口100萬token。',
+                     details: {
+                        '模型大小與架構': '專有模型，是 Gemini 的輕量化變體。',
+                        '訓練資料與方法': '在保持高性能的同時優化模型大小與推理速度。',
+                        '模型能力與用途': '資料分析代理、對話式 AI。支援原生音訊輸出和影音輸入，顯著降低使用成本和回應時間。',
+                        '官方來源': 'Google Cloud Blog (Expanding Gemini 2.5 Flash and Pro capabilities)'
+                    }
+                },
+                {
+                    id: 'signgemma', name: 'SignGemma', company: 'Google', type: '開源', releaseDate: '2025-05-21',
+                    tags: ['專業化', '手語翻譯', '無障礙'],
+                    summary: '專門用於將手語（特別是美國手語 ASL）翻譯成口語文本的模型，是 AI 包容性的重要一步。',
+                    details: {
+                        '模型大小與架構': '屬於 Gemma 模型家族，具體授權條款和架構尚未詳細說明。',
+                        '訓練資料與方法': '專注於手語資料訓練。',
+                        '模型能力與用途': '翻譯手語。被譽為迄今為止在這方面「能力最強的模型」。',
+                        '官方來源': '於 Google I/O 2025 宣布'
+                    }
+                },
+                {
+                    id: 'medgemma', name: 'Google MedGemma (4B & 27B)', company: 'Google DeepMind (Google Health AI)', type: '開源', releaseDate: '2025-05-30',
+                    tags: ['醫療AI', '多模態醫療', '文本理解', '影像分析', '開源'],
+                    summary: 'Google開源的基於Gemma3架構的醫療領域專用模型系列，包括4B多模態（影像+文本）和27B文本專用版本，旨在輔助醫療文本和影像理解。',
+                    details: {
+                        '模型大小與架構': '基於Gemma3。4B參數模型(多模態：醫療圖像+文本，內置影像編碼器)，27B參數模型(文本專用)。上下文長度128K tokens。',
+                        '訓練資料與方法': '基於Gemma3通用能力，大規模醫療資料預訓練和微調。4B預訓練醫學影像與報告。27B聚焦醫學文檔、論文、對話。指令微調。使用經過去識別化的資料訓練。',
+                        '模型能力與用途': '輔助醫療文本和影像理解。放射報告生成、臨床筆記轉換總結、分診建議、醫療知識問答。4B看圖說話，27B深入臨床文本理解。',
+                        '效能與基準': '放射報告生成接近專科醫生。臨床問答(HealthSearchQA)與GPT-4.5-turbo等相當。HealthBench匹敵GPT-4.5級別。4B在MURA骨骼X光分類開源最優。',
+                        '技術創新': '醫療領域專精與開源。結合多模態學習與長上下文。內建隱私保護設計。選擇性激活和高效推理優化。',
+                        '官方來源': 'Google開發者官方博客 (Google Releases MedGemma), Google Cloud Vertex AI, Hugging Face'
+                    }
+                },
+                 {
+                    id: 'claude4', name: 'Claude 4 Opus & Sonnet 4', company: 'Anthropic', type: '閉源', releaseDate: '2025-05-22',
+                    tags: ['程式編寫', '增強推理', '代理能力', '企業應用'],
+                    summary: 'Claude 系列的最新一代，Opus 4 號稱世界最佳程式編寫模型，Sonnet 4 則為 GitHub Copilot 提供支援。引入「延伸思考」與混合推理模式。',
+                    details: {
+                        '模型大小與架構': '專有混合模型，具有近乎即時回應和「延伸思考」(extended thinking) / 混合推理模式、並行工具使用能力和改善的記憶力。上下文視窗 200k token (Opus 4)。',
+                        '訓練資料與方法': '大規模互聯網文本預訓練，透過憲法式AI原則和人類反饋強化學習。引入混合推理訓練，多輪紅隊測試與安全優化。',
+                        '模型能力與用途': 'Opus 4 擅長複雜問題解決、長時間任務、AI 代理、研究、寫作、科學發現，編碼能力頂尖。Sonnet 4 平衡效能與效率，具卓越程式編寫和推理能力，支援高併發應用。兩者均支援平行工具使用和增強記憶機制。Claude Code功能與IDE深度整合。',
+                        '官方來源': 'Anthropic News (Introducing Claude 4), Anthropic Claude Opus 4 page'
+                    }
+                },
+                {
+                    id: 'mistral_agents_api', name: 'Mistral Agents API', company: 'Mistral AI', type: '混合', releaseDate: '2025-05-28',
+                    tags: ['代理能力', 'API'],
+                    summary: '一個簡化 AI 代理開發的 API，內建多種工具連接器（程式碼執行、圖像生成、網路搜尋），並支援代理協調以處理複雜問題。',
+                    details: {
+                        '模型大小與架構': '結合專有模型 (Medium 3) 和開源模型 (Devstral) 作為代理的「大腦」。',
+                        '訓練資料與方法': 'N/A (API 產品)',
+                        '模型能力與用途': '支援程式碼執行、圖像生成、網路搜尋。具備持久記憶體和對話分支功能，旨在降低開發者建構複雜 AI 代理的門檻。',
+                        '官方來源': 'Mistral AI Docs (Changelog)'
+                    }
+                },
+                {
+                    id: 'codestral_embed', name: 'Codestral Embed', company: 'Mistral AI', type: '混合', releaseDate: '2025-05-28',
+                    tags: ['專業化', '程式編寫', '嵌入'],
+                    summary: '專為程式碼設計的嵌入模型，用於增強 RAG、語義程式碼搜尋和程式碼分析等應用的效能。',
+                    details: {
+                        '模型大小與架構': '專用嵌入模型，可將程式碼轉換為數值向量表示。最大 token 限制 8k。',
+                        '訓練資料與方法': '專為程式碼訓練。',
+                        '模型能力與用途': '檢索增強生成 (RAG)、語義程式碼搜尋、程式碼相似性檢測、重複檢測、語義聚類。聲稱效能優於多個現有模型。',
+                        '官方來源': 'Mistral AI News (Codestral Embed)'
+                    }
+                },
+                {
+                    id: 'devstral_small', name: 'Devstral Small (24B)', company: 'Mistral AI & All Hands AI', type: '開源', releaseDate: '2025-05-21',
+                    tags: ['開源', '代理能力', '程式編寫'],
+                    summary: '一個 24B 參數的開源程式編寫代理模型，可在消費級 GPU 本地運行，並在 SWE-Bench 上取得開源模型第一的成績。專為軟體工程代理任務訓練。',
+                     details: {
+                        '模型大小與架構': '240 億參數，基於 Mistral Small 3.1 架構微調（移除視覺部分）。上下文視窗 128k token。Apache 2.0 授權。',
+                        '訓練資料與方法': '使用約2.5萬對 GitHub Issue 與對應代碼修改的資料進行微調 (SWE-Bench資料集)。採用 agentic 框架 (OpenHands) 訓練。',
+                        '模型能力與用途': '使用工具探索程式碼庫、編輯多文件、提出錯誤修復/新功能建議、自動化軟體工程生命週期。可在單卡GPU運行。',
+                        '官方來源': 'Mistral AI News (Devstral), Kaggle Model Card, InfoQ News'
+                    }
+                },
+                {
+                    id: 'mistral_medium_3', name: 'Mistral Medium 3', company: 'Mistral AI', type: '閉源', releaseDate: '2025-05-07',
+                    tags: ['多模態', '企業級', '成本效益'],
+                    summary: '一個平衡效能與成本的企業級模型，具備高階推理、程式編寫和多模態能力（文本和圖像輸入），提供靈活的部署選項。',
+                    details: {
+                        '模型大小與架構': '「中型模型」(數百億級別)，採用經優化的 Transformer 架構。上下文視窗 128k 輸入，4k 輸出。支援多模態輸入。',
+                        '訓練資料與方法': '預訓練數據規模與大型模型相當，但著重效率。強化程式碼和STEM領域。採用混合雲部署訓練及架構改進。',
+                        '模型能力與用途': '文件分析、摘要、對話、函數呼叫、代理工作流程。支援程式編寫(80+語言)、數理推理。可本地私有或雲端運行。',
+                        '效能與基準': 'MMLU (85.6%), GSM8K (91.9%), HumanEval (80.1%), MBPP (82.6%), MMMU (66.1%), DocVQA (95.3%), AI2D (93.7%), ChartQA (82.6%)。聲稱效能達頂尖模型90%以上，成本僅1/8。',
+                        '技術創新': '高效率架構，以中等規模實現接近巨型模型的性能。易部署性。',
+                        '官方來源': 'Mistral AI News (Medium is the new large), GitHub Models project, NVIDIA Build Model Card'
+                    }
+                },
+                {
+                    id: 'phi4reasoningplus', name: 'Microsoft Phi-4-Reasoning-Plus', company: 'Microsoft Research', type: '開源', releaseDate: '2025-05-05',
+                    tags: ['增強推理', '數學', '科學問答', '程式編寫', '可解釋性AI'],
+                    summary: '微軟發布的14B參數開源研究模型，專精於複雜推理，特色是能輸出透明的鏈式思考過程(<think>...</think>)。',
+                    details: {
+                        '模型大小與架構': '140億參數 Transformer 模型，32K tokens 上下文窗口。增加推理頭和雙階段輸出格式。',
+                        '訓練資料與方法': '混合監督和強化學習。以高品質鏈式思考(CoT)示例資料微調Phi-4，融合合成CoT數據及AIRT紅隊安全訓練。',
+                        '模型能力與用途': '複雜推理、數學、科學問答、程式編寫。輸出隱含推理過程。內建JSON函數調用結構。',
+                        '效能與基準': 'AIME: 81.3, GPQA-Diamond: 78.0, LiveCodeBench: 68.9, IFEval: 84.9, ArenaHard: 79.0. 在Toxigen敏感內容基準表現良好。',
+                        '技術創新': '透明鏈式推理，雙階段輸出格式，高品質CoT資料微調結合強化學習，內建工具調用。',
+                        '官方來源': 'Hugging Face (microsoft/Phi-4-Reasoning-Plus)，Mahmoud Rabie LinkedIn報導'
+                    }
+                },
+                {
+                    id: 'dream7b', name: 'Dream 7B', company: '香港大學 & 華為諾亞方舟實驗室', type: '開源', releaseDate: '2025-05-15',
+                    tags: ['擴散模型', '文本生成', '規劃任務', '開源'],
+                    summary: '由香港大學與華為諾亞方舟實驗室共同開發的7B參數開源擴散式大型語言模型，在規劃任務上展現優勢。',
+                    details: {
+                        '模型大小與架構': '70億參數，離散擴散模型。初始化自Qwen2.5-7B權重，透過mask-diffusion訓練。上下文長度8K。',
+                        '訓練資料與方法': 'Qwen2.5-7B知識起點，掩碼擴散訓練 (5800億token)，180萬條指令追蹤資料微調。',
+                        '模型能力與用途': '一般問答、數學推理、編程、規劃任務。擴散模型特有的全局約束考慮能力。任意順序生成，可調節擴散步驟。',
+                        '效能與基準': '整體表現大幅超越先前擴散式文本模型。與LLaMA3-8B、Qwen2.5-7B相當或更好。規劃任務上超越同規模AR模型，甚至擊敗DeepSeek V3。',
+                        '技術創新': '將擴散模型引入LLM並取得競爭性成果。結合AR與擴散優點。任意順序解碼和可調節步驟。上下文自適應加噪。',
+                        '官方來源': '香港大學NLP集團官方博客 (Introducing Dream 7B)，GitHub (Dream-org)，Hugging Face'
+                    }
+                },
+                {
+                    id: 'kernelllm', name: 'Meta KernelLLM (8B)', company: 'Meta AI', type: '開源', releaseDate: '2025-05-24',
+                    tags: ['GPU核心生成', '程式碼優化', 'PyTorch', 'Triton', '開源'],
+                    summary: 'Meta AI 開源的8B參數模型，專為將PyTorch模組自動轉換為高效的Triton GPU kernel而訓練。',
+                    details: {
+                        '模型大小與架構': '80億參數 Transformer。基於Llama 3.1 70B指令調優版二次微調/知識萃取。針對GPU Kernel代碼生成任務調整。',
+                        '訓練資料與方法': '約25K對 PyTorch實現與對應Triton寫法的代碼樣本微調。加入KernelBench測試問題。指導學習從Llama3.1大模型提取知識。',
+                        '模型能力與用途': '自動將PyTorch程式碼轉換成Triton GPU kernel，優化深度學習模型執行效率。簡化GPU編程。',
+                        '效能與基準': 'KernelBench-Triton單輪模式下超越GPT-4o和DeepSeek V3。多輪互動超越DeepSeek R1。',
+                        '技術創新': '首個GPU Kernel生成專用LLM。微調於外部代碼對。引入單元測試驗證。高效壓縮大模型知識的方法。',
+                        '官方來源': 'Hugging Face (facebook/KernelLLM)，Meta工程博客，LinkedIn報導'
+                    }
+                }
+            ],
+            benchmarks: {
+                'SWE-Bench': {
+                    label: 'SWE-Bench (程式編寫)',
+                    data: [
+                        { model: 'Claude Opus 4', score: 72.5 },
+                        { model: 'Devstral Small (24B)', score: 46.8 },
+                    ],
+                    note: '分數越高越好。衡量模型解決真實世界軟體工程問題的能力。'
+                },
+                 'Terminal-bench': {
+                    label: 'Terminal-bench (程式編寫)',
+                    data: [
+                        { model: 'Claude Opus 4', score: 43.2 },
+                    ],
+                    note: '分數越高越好。'
+                },
+                'WebDev Arena': {
+                    label: 'WebDev Arena (網頁開發)',
+                    data: [
+                        { model: 'Gemini 2.5 Pro I/O', score: 1, type: 'rank' },
+                    ],
+                    note: '排名越低越好。衡量創建功能性網頁應用的能力。'
+                },
+                'MMLU': {
+                    label: 'MMLU (通用知識)',
+                    data: [
+                        { model: 'Mistral Medium 3', score: 85.6 },
+                    ],
+                    note: '分數越高越好。衡量模型的綜合知識水平。'
+                },
+                'HumanEval': {
+                    label: 'HumanEval (程式編寫)',
+                    data: [
+                        { model: 'Mistral Medium 3', score: 80.1 },
+                    ],
+                    note: '分數越高越好。'
+                },
+                'Phi4_Reasoning_Benchmarks': {
+                    label: 'Phi-4 Reasoning+ 基準綜合',
+                    data: [
+                        { model: 'Phi-4 Reasoning+ (AIME)', score: 81.3 },
+                        { model: 'Phi-4 Reasoning+ (GPQA-Diamond)', score: 78.0 },
+                        { model: 'Phi-4 Reasoning+ (LiveCodeBench)', score: 68.9 },
+                        { model: 'Phi-4 Reasoning+ (IFEval)', score: 84.9 },
+                        { model: 'Phi-4 Reasoning+ (ArenaHard)', score: 79.0 },
+                    ],
+                    note: '分數越高越好。Phi-4 Reasoning+ 在多項推理相關基準上的表現。'
+                },
+                 'Mistral_Medium3_Additional': {
+                    label: 'Mistral Medium 3 附加基準',
+                    data: [
+                        { model: 'Mistral Medium 3 (GSM8K)', score: 91.9 },
+                        { model: 'Mistral Medium 3 (MBPP)', score: 82.6 },
+                        { model: 'Mistral Medium 3 (MMMU)', score: 66.1 },
+                        { model: 'Mistral Medium 3 (DocVQA)', score: 95.3 },
+                        { model: 'Mistral Medium 3 (AI2D)', score: 93.7 },
+                        { model: 'Mistral Medium 3 (ChartQA)', score: 82.6 },
+                    ],
+                    note: '分數越高越好。Mistral Medium 3 在多項數學、程式編寫及多模態基準上的表現。'
+                }
+            }
+        };
+
+        let performanceChart;
+        let activeFilters = {
+            company: [],
+            type: [],
+            tags: []
+        };
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const contentTabs = document.querySelectorAll('.content-tab');
+            const trendCards = document.querySelectorAll('.trend-card');
+            
+            function switchTab(tabName) {
+                tabs.forEach(tab => {
+                    const isActive = tab.dataset.tab === tabName;
+                    tab.classList.toggle('tab-active', isActive);
+                    tab.classList.toggle('tab-inactive', !isActive);
+                });
+                contentTabs.forEach(content => {
+                    content.classList.toggle('hidden', content.id !== tabName);
+                });
+                
+                if(tabName === 'performance' && !performanceChart) {
+                    initPerformanceChart();
+                } else if (tabName === 'performance' && performanceChart) {
+                    // Ensure chart is updated if data changed while tab was hidden
+                     const selector = document.getElementById('benchmark-selector');
+                     updatePerformanceChart(selector.value);
+                }
+
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            trendCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const tag = e.currentTarget.dataset.filterTag;
+                    resetFilters();
+                    activeFilters.tags.push(tag);
+                    switchTab('explorer');
+                    renderModelExplorer(); 
+                });
+            });
+
+            function initApp() {
+                switchTab('dashboard');
+                renderTimeline();
+                renderFilters();
+                renderModelExplorer();
+            }
+
+            function renderTimeline() {
+                const timelineContainer = document.getElementById('timeline');
+                const sortedModels = [...llmData.models].sort((a, b) => {
+                    const dateA = new Date(a.releaseDate.replace('月初', '-01').replace('月中', '-15').replace('月底', '-28'));
+                    const dateB = new Date(b.releaseDate.replace('月初', '-01').replace('月中', '-15').replace('月底', '-28'));
+                    return dateA - dateB;
+                });
+                timelineContainer.innerHTML = sortedModels.map(model => `
+                    <div class="mb-8 ml-4">
+                        <div class="absolute w-3 h-3 bg-indigo-500 rounded-full -left-1.5 border border-white"></div>
+                        <time class="mb-1 text-sm font-normal leading-none text-gray-500">${model.releaseDate}</time>
+                        <h3 class="text-lg font-semibold text-gray-900">${model.name}</h3>
+                        <p class="text-base font-normal text-gray-600">${model.summary}</p>
+                         <button class="view-details-btn mt-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium" data-model-id="${model.id}">查看詳情 →</button>
+                    </div>
+                `).join('');
+                
+                document.querySelectorAll('.view-details-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const modelId = e.currentTarget.dataset.modelId;
+                        showModal(modelId);
+                    });
+                });
+            }
+
+            function renderFilters() {
+                const filtersContainer = document.getElementById('filters');
+                const companies = [...new Set(llmData.models.map(m => m.company))].sort();
+                const types = [...new Set(llmData.models.map(m => m.type))].sort();
+                let allTags = [];
+                llmData.models.forEach(m => {
+                    if(m.tags) allTags.push(...m.tags);
+                });
+                const uniqueTags = [...new Set(allTags)].sort();
+
+                let html = '<div class="w-full mb-4"><span class="font-semibold text-gray-700">篩選條件:</span> <button class="filter-btn active ml-2" data-filter-type="all" data-filter-value="all">全部重置</button></div>';
+                
+                html += '<div class="w-full mb-3"><strong class="text-sm text-gray-600">依公司:</strong> ';
+                html += companies.map(c => `<button class="filter-btn" data-filter-type="company" data-filter-value="${c}">${c}</button>`).join('');
+                html += '</div>';
+
+                html += '<div class="w-full mb-3"><strong class="text-sm text-gray-600">依類型:</strong> ';
+                html += types.map(t => `<button class="filter-btn" data-filter-type="type" data-filter-value="${t}">${t}</button>`).join('');
+                html += '</div>';
+                
+                html += '<div class="w-full"><strong class="text-sm text-gray-600">依標籤:</strong> ';
+                html += uniqueTags.map(t => `<button class="filter-btn" data-filter-type="tags" data-filter-value="${t}">${t}</button>`).join('');
+                html += '</div>';
+
+
+                filtersContainer.innerHTML = html;
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', handleFilterClick));
+            }
+            
+            function handleFilterClick(e) {
+                const btn = e.currentTarget;
+                const type = btn.dataset.filterType;
+                const value = btn.dataset.filterValue;
+
+                if (type === 'all') {
+                    resetFilters();
+                } else {
+                    const index = activeFilters[type].indexOf(value);
+                    if (index > -1) {
+                        activeFilters[type].splice(index, 1);
+                        btn.classList.remove('active');
+                        btn.classList.remove('bg-indigo-500', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    } else {
+                        activeFilters[type].push(value);
+                        btn.classList.add('active');
+                        btn.classList.add('bg-indigo-500', 'text-white');
+                        btn.classList.remove('bg-gray-200', 'text-gray-700');
+                    }
+                    document.querySelector('[data-filter-type="all"]').classList.remove('active');
+                     document.querySelector('[data-filter-type="all"]').classList.remove('bg-indigo-500', 'text-white');
+                    document.querySelector('[data-filter-type="all"]').classList.add('bg-gray-200', 'text-gray-700');
+
+
+                    if (activeFilters.company.length === 0 && activeFilters.type.length === 0 && activeFilters.tags.length === 0) {
+                         document.querySelector('[data-filter-type="all"]').classList.add('active');
+                         document.querySelector('[data-filter-type="all"]').classList.add('bg-indigo-500', 'text-white');
+                         document.querySelector('[data-filter-type="all"]').classList.remove('bg-gray-200', 'text-gray-700');
+                    }
+                }
+                renderModelExplorer();
+            }
+
+            function resetFilters() {
+                 activeFilters = { company: [], type: [], tags: [] };
+                 document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.remove('bg-indigo-500', 'text-white');
+                    b.classList.add('bg-gray-200', 'text-gray-700');
+                 });
+                 const allBtn = document.querySelector('[data-filter-type="all"]');
+                 allBtn.classList.add('active');
+                 allBtn.classList.add('bg-indigo-500', 'text-white');
+                 allBtn.classList.remove('bg-gray-200', 'text-gray-700');
+            }
+            
+            function styleFilterButtons() {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.add('px-3', 'py-1', 'text-xs', 'rounded-full', 'mr-1', 'mb-1', 'transition-colors', 'duration-150');
+                    if (btn.classList.contains('active')) {
+                        btn.classList.add('bg-indigo-500', 'text-white');
+                        btn.classList.remove('bg-gray-200', 'text-gray-700');
+                    } else {
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                        btn.classList.remove('bg-indigo-500', 'text-white');
+                    }
+                });
+            }
+
+
+            function renderModelExplorer() {
+                const grid = document.getElementById('model-grid');
+                const noResults = document.getElementById('no-results');
+                const filteredModels = llmData.models.filter(model => {
+                    const companyMatch = activeFilters.company.length === 0 || activeFilters.company.includes(model.company);
+                    const typeMatch = activeFilters.type.length === 0 || activeFilters.type.includes(model.type);
+                    const tagMatch = activeFilters.tags.length === 0 || (model.tags && activeFilters.tags.every(t => model.tags.includes(t)));
+                    return companyMatch && typeMatch && tagMatch;
+                });
+
+                if (filteredModels.length === 0) {
+                    grid.innerHTML = '';
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                    grid.innerHTML = filteredModels.map(model => `
+                        <div class="border border-gray-200 rounded-lg p-5 bg-white trend-card cursor-pointer" data-model-id="${model.id}">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold text-gray-800">${model.name}</h3>
+                                <span class="text-xs font-semibold px-2 py-1 rounded-full ${model.type === '開源' ? 'bg-green-100 text-green-800' : (model.type === '閉源' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')}">${model.type}</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">${model.company}</p>
+                            <p class="text-sm text-gray-600 mt-3 h-20 overflow-hidden">${model.summary}</p>
+                            <div class="mt-4 flex flex-wrap gap-1">
+                                ${model.tags && model.tags.map(tag => `<span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                document.querySelectorAll('#model-grid .trend-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const modelId = e.currentTarget.dataset.modelId;
+                        showModal(modelId);
+                    });
+                });
+                
+                styleFilterButtons();
+            }
+
+            function showModal(modelId) {
+                const model = llmData.models.find(m => m.id === modelId);
+                if (!model) return;
+
+                const modalContainer = document.getElementById('modal-container');
+                modalContainer.innerHTML = `
+                    <div class="modal-backdrop">
+                        <div class="modal-content" id="modal-content-inner">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-gray-900">${model.name}</h2>
+                                <button id="close-modal" class="text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+                            </div>
+                            <div class="text-sm text-gray-500 mb-4">
+                                <span><strong>發布公司：</strong> ${model.company}</span> | 
+                                <span><strong>類型：</strong> ${model.type}</span> | 
+                                <span><strong>發布日期：</strong> ${model.releaseDate}</span>
+                            </div>
+                            <p class="mb-6 text-gray-700">${model.summary}</p>
+                            <div class="space-y-4">
+                                ${Object.entries(model.details).map(([key, value]) => `
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">${key.replace(/_/g, ' ')}</h4>
+                                        <p class="text-gray-600 whitespace-pre-wrap">${value.startsWith('http') ? `<a href="${value}" target="_blank" class="text-indigo-600 hover:underline break-all">${value}</a>` : value}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modalContainer.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+                
+                document.getElementById('close-modal').addEventListener('click', closeModal);
+                modalContainer.querySelector('.modal-backdrop').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-backdrop')) {
+                        closeModal();
+                    }
+                });
+            }
+
+            function closeModal() {
+                document.getElementById('modal-container').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+
+            function initPerformanceChart() {
+                const selector = document.getElementById('benchmark-selector');
+                selector.innerHTML = Object.entries(llmData.benchmarks).map(([key, value]) => 
+                    `<option value="${key}">${value.label}</option>`
+                ).join('');
+                
+                selector.addEventListener('change', (e) => updatePerformanceChart(e.target.value));
+                
+                const ctx = document.getElementById('performance-chart').getContext('2d');
+                performanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '',
+                            data: [],
+                            backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#374151' },
+                                grid: { color: '#E5E7EB' }
+                            },
+                            x: {
+                                ticks: { 
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    color: '#374151',
+                                    callback: function(value) {
+                                        const label = this.getLabelForValue(value);
+                                        if (label.length > 16) {
+                                            return label.substring(0, 16) + '...';
+                                        }
+                                        return label;
+                                    }
+                                },
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                titleFont: { weight: 'bold' },
+                                bodyFont: { size: 12 },
+                                footerFont: { style: 'italic' },
+                                backgroundColor: 'rgba(0,0,0,0.7)',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#FFFFFF',
+                                footerColor: '#CCCCCC',
+                                callbacks: {
+                                    footer: function(tooltipItems) {
+                                       const benchmarkKey = document.getElementById('benchmark-selector').value;
+                                       return llmData.benchmarks[benchmarkKey].note;
+                                    }
+                                }
+                            },
+                             title: {
+                                display: true,
+                                text: '',
+                                font: { size: 16, weight: 'bold'},
+                                color: '#1F2937'
+                            }
+                        }
+                    }
+                });
+
+                updatePerformanceChart(selector.value);
+            }
+            
+            function updatePerformanceChart(benchmarkKey) {
+                if (!performanceChart || !llmData.benchmarks[benchmarkKey]) {
+                     console.warn("Chart or benchmark data not ready for key:", benchmarkKey);
+                     return;
+                }
+                const benchmarkData = llmData.benchmarks[benchmarkKey];
+                
+                const isRank = benchmarkData.type === 'rank';
+                performanceChart.options.scales.y.reverse = isRank;
+                performanceChart.options.plugins.title.text = benchmarkData.label;
+
+                performanceChart.data.labels = benchmarkData.data.map(d => d.model);
+                performanceChart.data.datasets[0].data = benchmarkData.data.map(d => d.score);
+                performanceChart.update();
+            }
+
+            initApp();
+        });
+    </script>
+</body>
+</html>

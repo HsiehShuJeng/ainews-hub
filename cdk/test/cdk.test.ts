@@ -9,12 +9,9 @@ describe('CdkStack', () => {
     return Template.fromStack(stack);
   }
 
-  test('creates an S3 bucket with the correct name pattern', () => {
+  test('creates 2 S3 buckets (main and logging)', () => {
     const template = createTemplate();
-    template.resourceCountIs('AWS::S3::Bucket', 1);
-    template.hasResourceProperties('AWS::S3::Bucket', {
-      BucketName: Match.stringLikeRegexp('ai-news-.*'),
-    });
+    template.resourceCountIs('AWS::S3::Bucket', 2);
   });
 
   test('creates an S3OriginAccessControl for CloudFront', () => {
@@ -31,17 +28,32 @@ describe('CdkStack', () => {
     });
   });
 
-  test('creates a CloudFront distribution with S3BucketOrigin and OAC', () => {
+  test('creates a CloudFront distribution with S3BucketOrigin and OAC and SPA routing', () => {
     const template = createTemplate();
     template.resourceCountIs('AWS::CloudFront::Distribution', 1);
     template.hasResourceProperties('AWS::CloudFront::Distribution', {
       DistributionConfig: {
         DefaultCacheBehavior: {
           TargetOriginId: Match.anyValue(),
+          Compress: true,
+          ViewerProtocolPolicy: 'redirect-to-https',
         },
+        DefaultRootObject: 'index.html',
+        CustomErrorResponses: Match.arrayWith([
+          Match.objectLike({
+            ErrorCode: 404,
+            ResponseCode: 200,
+            ResponsePagePath: '/index.html',
+          }),
+          Match.objectLike({
+            ErrorCode: 403,
+            ResponseCode: 200,
+            ResponsePagePath: '/index.html',
+          })
+        ]),
         Origins: Match.arrayWith([
           Match.objectLike({
-            OriginAccessControlId: Match.anyValue(), // fixed: at root
+            OriginAccessControlId: Match.anyValue(),
             DomainName: Match.anyValue(),
             S3OriginConfig: Match.objectLike({
               OriginAccessIdentity: ''
@@ -59,11 +71,14 @@ describe('CdkStack', () => {
       SourceBucketNames: Match.anyValue(),
       SourceObjectKeys: Match.anyValue(),
       DestinationBucketName: Match.anyValue(),
+      SystemMetadata: Match.objectLike({
+        'cache-control': Match.stringLikeRegexp('public, max-age=\\d+')
+      }),
       // We cannot directly assert the source path, but presence of this resource is sufficient
     });
   });
 
-  test('outputs S3 bucket name and CDN domain name', () => {
+  test('outputs S3 bucket name, CDN domain name, and distribution ID', () => {
     const template = createTemplate();
     template.hasOutput('AiNewsBucketName', {
       Description: 'The name of the S3 bucket',
@@ -71,6 +86,10 @@ describe('CdkStack', () => {
     });
     template.hasOutput('CdnDomainName', {
       Description: 'The domain name of the CloudFront distribution',
+      Value: Match.anyValue(),
+    });
+    template.hasOutput('CdnDistributionId', {
+      Description: 'The CloudFront distribution ID',
       Value: Match.anyValue(),
     });
   });

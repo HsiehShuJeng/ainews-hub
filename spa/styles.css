@@ -1,0 +1,18 @@
+body {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    background-color: #FDFBF8;
+    color: #374151;
+}
+.tab-active {
+    border-bottom-color: #818CF8;
+    color: #4338CA;
+    font-weight: 600;
+}
+.tab-inactive {
+    border-bottom-color: transparent;
+    color: #6B7280;
+}
+.modal-backdrop {
+    position: fixed;
+    /* ... add your modal styles ... */
+}

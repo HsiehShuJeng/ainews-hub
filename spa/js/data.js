@@ -247,6 +247,13 @@ export const llmData = {
                 '訓練資料與方法': '基於 Google DeepMind 在生成模型上的研究，具體訓練細節未公開。',
                 '模型能力與用途': '根據文字、圖像提示生成高品質影片。提供細膩的電影風格控制、角色一致性維持、場景建構、風格轉換、原生音訊（包含音效與對白）生成等功能。主要透過 Flow AI 電影製作工具進行創作。',
                 '技術創新': '顯著提升生成影片的真實感、物理模擬準確度與提示理解能力。Veo 3 新增原生音訊生成。Flow 工具提供進階攝影機控制、參考圖像引導生成、影片風格遷移、物件添加/移除、內容擴展繪製 (outpainting) 等專業功能。',
+                'demoVideos': [
+                    { name: 'Veo 3 Demo 1', thumbnailUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=Video', videoUrl: 'https://ai-news-tokenawsstackid10.s3.amazonaws.com/videos/[2025.06.03][Manus]20250603130300_x_video_20250603130300.mp4' },
+                    { name: 'Veo 3 Demo 2', thumbnailUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=Video', videoUrl: 'https://ai-news-tokenawsstackid10.s3.amazonaws.com/videos/[2025.06.03][Manus]20250603130440_x_video_20250603130440.mp4' },
+                    { name: 'Veo 3 Demo 3', thumbnailUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=Video', videoUrl: 'https://ai-news-tokenawsstackid10.s3.amazonaws.com/videos/[2025.06.03][Manus]20250603130546_x_video_20250603130546.mp4' },
+                    { name: 'Veo 3 Demo 4', thumbnailUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=Video', videoUrl: 'https://ai-news-tokenawsstackid10.s3.amazonaws.com/videos/[2025.06.03][Manus]20250603131003_x_video_20250603131003.mp4' },
+                    { name: 'Veo 3 Demo 5', thumbnailUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=Video', videoUrl: 'https://ai-news-tokenawsstackid10.s3.amazonaws.com/videos/[2025.06.03][Manus]20250603131116_x_video_20250603131116.mp4' }
+                ],
                 'official_source': [
                     { organisation: 'Google DeepMind', year: 2025, title: 'Veo - Our state-of-the-art video generation model', url: 'https://deepmind.google/models/veo/' },
                     { organisation: 'Google Blog', year: 2025, title: 'Meet Flow: AI-powered filmmaking with Veo 3', url: 'https://blog.google/technology/ai/google-flow-veo-ai-filmmaking-tool/' }

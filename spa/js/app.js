@@ -315,67 +315,82 @@ export function initApp() {
 
     function showModal(modelId) {
         const model = llmData.models.find(m => m.id === modelId);
-        if (!model) return;
+        const modalContainer = document.getElementById('modal-container');
 
-        let detailsHtml = '';
-        for (const key in model.details) {
-            if (key === 'official_source') {
-                if (Array.isArray(model.details[key]) && model.details[key].length > 0) {
-                    detailsHtml += `<dt class="font-semibold text-gray-700 mt-3">${key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase())}:</dt>`;
-                    model.details[key].forEach(source => {
-                        let sourceString = '';
-                        if (source.organisation) sourceString += `${source.organisation}`;
-                        if (source.year) sourceString += ` (${source.year})`;
-                        if (source.title) sourceString += `. *${source.title}*. `;
-                        else sourceString += '. ';
-                        if (source.url) {
-                            sourceString += `Available at: <a href="${source.url}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800">${source.url}</a>`;
-                        } else {
-                            sourceString += `(No URL provided)`;
-                        }
-                        detailsHtml += `<dd class="text-gray-600 ml-4 mb-1">- ${sourceString}</dd>`;
-                    });
+        if (!model) {
+            console.error(`Model with id ${modelId} not found.`);
+            return;
+        }
+
+        let detailsHtml = Object.entries(model.details)
+            .filter(([key]) => key !== 'official_source' && key !== 'demoVideos') // Exclude sources and demo videos from this section
+            .map(([key, value]) => {
+                let formattedValue = value;
+                if (typeof value === 'string') {
+                    formattedValue = value.replace(/\n/g, '<br>');
                 }
-            } else {
-                detailsHtml += `<dt class="font-semibold text-gray-700 mt-3">${key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase())}:</dt><dd class="text-gray-600">${model.details[key]}</dd>`;
-            }
+                return `<div class="mb-3"><strong class="font-semibold text-gray-700">${key}:</strong> <span class="text-gray-600">${formattedValue}</span></div>`;
+            })
+            .join('');
+
+        if (model.details.official_source && model.details.official_source.length > 0) {
+            detailsHtml += `<div class="mt-4"><strong class="font-semibold text-gray-700">官方來源:</strong><ul class="list-disc list-inside mt-1 text-sm">`;
+            model.details.official_source.forEach(source => {
+                detailsHtml += `<li><a href="${source.url}" target="_blank" class="text-indigo-600 hover:text-indigo-800">${source.title} (${source.organisation}, ${source.year})</a></li>`;
+            });
+            detailsHtml += `</ul></div>`;
+        }
+
+        // Add Demo Videos Section
+        if (model.details.demoVideos && model.details.demoVideos.length > 0) {
+            detailsHtml += `<div class="mt-6"><strong class="font-semibold text-gray-700 mb-2 block">示範影片:</strong>`;
+            detailsHtml += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">`;
+            model.details.demoVideos.forEach((video, index) => {
+                detailsHtml += `
+                    <div class="cursor-pointer group relative" data-video-url="${video.videoUrl}" onclick="playDemoVideo('${video.videoUrl}', '${video.name}')">
+                        <img src="${video.thumbnailUrl}" alt="${video.name}" class="w-full h-24 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-200">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 flex items-center justify-center rounded-lg transition-opacity duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-center mt-1 text-gray-600 group-hover:text-indigo-600">${video.name}</p>
+                    </div>`;
+            });
+            detailsHtml += `</div></div>`;
         }
 
         const modalContent = `
-            <div class="modal-backdrop">
-                <div class="modal-content" id="modal-content-inner">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold text-gray-900">${model.name}</h2>
-                        <button id="close-modal" class="text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <div id="model-detail-modal" class="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center p-4 z-50">
+                <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-auto p-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800">${model.name}</h2>
+                        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 transition duration-150">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
                     </div>
-                    <div class="text-sm text-gray-500 mb-4">
-                        <span><strong>發布公司：</strong> ${model.company}</span> | 
-                        <span><strong>類型：</strong> ${model.type}</span> | 
-                        <span><strong>發布日期：</strong> ${model.releaseDate}</span>
+                    <div class="text-sm text-gray-500 mb-1"><strong>公司:</strong> ${model.company} | <strong>類型:</strong> ${model.type} | <strong>發布日期:</strong> ${model.releaseDate}</div>
+                    <div class="mb-4">
+                        ${model.tags.map(tag => `<span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
                     </div>
-                    <p class="mb-6 text-gray-700">${model.summary}</p>
-                    <div class="space-y-4">
+                    <p class="text-gray-700 mb-4">${model.summary}</p>
+                    <div class="border-t border-gray-200 pt-4">
                         ${detailsHtml}
                     </div>
                 </div>
             </div>
         `;
-        const modalContainer = document.getElementById('modal-container');
         modalContainer.innerHTML = modalContent;
         modalContainer.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; 
-        
-        document.getElementById('close-modal').addEventListener('click', closeModal);
-        modalContainer.querySelector('.modal-backdrop').addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-backdrop')) {
-                closeModal();
-            }
-        });
+        document.body.classList.add('overflow-hidden'); 
+        document.getElementById('close-modal-btn').addEventListener('click', closeModal);
     }
 
     function closeModal() {
-        document.getElementById('modal-container').classList.add('hidden');
-        document.body.style.overflow = 'auto';
+        const modalContainer = document.getElementById('modal-container');
+        modalContainer.innerHTML = ''; 
+        modalContainer.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
     }
 
     function getReleaseDateFromModelString(modelName) {
@@ -749,4 +764,51 @@ export function initApp() {
 
     // This function is called after DOMContentLoaded in spa/index.html
     initAppComponents();
+}
+
+// Existing playDemoVideo function (if any) should be updated or this is a new one.
+// Ensure this function is defined in the global scope or exported if app.js is a module and this is called from inline HTML.
+window.playDemoVideo = function(videoUrl, videoName) {
+    const modalContainer = document.getElementById('modal-container');
+    
+    // Create a new modal for the video player
+    const videoModalContent = `
+        <div id="video-player-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60]">
+            <div class="relative bg-white rounded-lg shadow-xl max-w-3xl w-full mx-auto p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xl font-semibold text-gray-800">${videoName}</h3>
+                    <button id="close-video-player-btn" class="text-gray-500 hover:text-gray-700 transition duration-150">
+                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <div class="aspect-w-16 aspect-h-9"> 
+                    <video src="${videoUrl}" controls autoplay class="w-full h-full rounded"></video>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">正在播放: ${videoName}. 您可能需要允許自動播放或點擊播放按鈕。</p>
+            </div>
+        </div>
+    `;
+
+    // Append to modal container - allows multiple modals if needed, though only one video player at a time is expected.
+    const videoPlayerElement = document.createElement('div');
+    videoPlayerElement.innerHTML = videoModalContent;
+    modalContainer.appendChild(videoPlayerElement.firstChild);
+    
+    // Ensure the main modal container is visible if it was hidden
+    modalContainer.classList.remove('hidden');
+    // Optional: Keep body scroll locked if it was already
+    // document.body.classList.add('overflow-hidden'); 
+
+    document.getElementById('close-video-player-btn').addEventListener('click', () => {
+        const videoPlayerModal = document.getElementById('video-player-modal');
+        if (videoPlayerModal) {
+            videoPlayerModal.remove();
+        }
+        // If no other modals are open (e.g. detail modal is closed), then unhide body scroll.
+        // This simple check assumes only one detail modal and one video player modal.
+        if (modalContainer.children.length === 0) {
+            modalContainer.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+    });
 } 

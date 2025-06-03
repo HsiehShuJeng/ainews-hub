@@ -265,9 +265,9 @@ export function initApp() {
             noResults.classList.add('hidden');
             grid.innerHTML = filteredModels.map(model => `
                 <div class="border border-gray-200 rounded-lg p-5 bg-white trend-card cursor-pointer" data-model-id="${model.id}">
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-lg font-bold text-gray-800">${model.name}</h3>
-                        <span class="text-xs font-semibold px-2 py-1 rounded-full ${model.type === '開源' ? 'bg-green-100 text-green-800' : (model.type === '閉源' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')}">${model.type}</span>
+                    <div class="flex justify-between items-start pr-2">
+                        <h3 class="text-lg font-bold text-gray-800 mr-2">${model.name}</h3>
+                        <span class="text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0 ${model.type === '開源' ? 'bg-green-100 text-green-800' : (model.type === '閉源' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')}">${model.type}</span>
                     </div>
                     <p class="text-sm text-gray-500 mt-1">${model.company}</p>
                     <p class="text-sm text-gray-600 mt-3 h-20 overflow-hidden">${model.summary}</p>

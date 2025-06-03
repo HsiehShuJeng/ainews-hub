@@ -206,27 +206,326 @@ export const llmData = {
             data: [
                 { model: 'Claude Opus 4', score: 72.5 },
                 { model: 'Devstral Small (24B)', score: 46.8 },
+                { model: 'Claude Sonnet 4', score: 72.7 },
+                { model: 'OpenAI Operator (o3)', score: 69.1 }
             ],
             note: '分數越高越好。衡量模型解決真實世界軟體工程問題的能力。'
         },
          'Terminal-bench': {
-            label: 'Terminal-bench (程式編寫)',
+            label: 'Terminal-bench (終端操作)',
             data: [
                 { model: 'Claude Opus 4', score: 43.2 },
+                { model: 'Claude Sonnet 4', score: 35.5 }
             ],
-            note: '分數越高越好。'
+            note: '分數越高越好。衡量在類終端環境中執行編碼任務的能力。'
         },
         'WebDev Arena': {
             label: 'WebDev Arena (網頁開發)',
             data: [
-                { model: 'Gemini 2.5 Pro I/O', score: 1, type: 'rank' },
-            ],
-            note: '排名越低越好。衡量創建功能性網頁應用的能力。'
+                {
+                  model: "Claude Opus 4 (20250514)",
+                  score: 1415.82,
+                  rank: 1,
+                  ci: { plus: 17.16, minus: 15.68 },
+                  votes: 1494,
+                  organization: "Anthropic",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Gemini-2.5-Pro-Preview-05-06",
+                  score: 1409.06,
+                  rank: 1,
+                  ci: { plus: 14.77, minus: 10.38 },
+                  votes: 3740,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Claude Sonnet 4 (20250514)",
+                  score: 1386.16,
+                  rank: 1,
+                  ci: { plus: 16.84, minus: 15.48 },
+                  votes: 1490,
+                  organization: "Anthropic",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Claude 3.7 Sonnet (20250219)",
+                  score: 1357.09,
+                  rank: 4,
+                  ci: { plus: 7.91, minus: 7.57 },
+                  votes: 7481,
+                  organization: "Anthropic",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Gemini-2.5-Flash-Preview-05-20",
+                  score: 1313.36,
+                  rank: 5,
+                  ci: { plus: 12.15, minus: 11.34 },
+                  votes: 2312,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "GPT-4.1-2025-04-14",
+                  score: 1256.31,
+                  rank: 6,
+                  ci: { plus: 9.69, minus: 8.85 },
+                  votes: 5278,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Claude 3.5 Sonnet (20241022)",
+                  score: 1237.74,
+                  rank: 7,
+                  ci: { plus: 4.49, minus: 5.69 },
+                  votes: 26338,
+                  organization: "Anthropic",
+                  license: "Proprietary"
+                },
+                // 以下多個模型并列 Rank 8：
+                {
+                  model: "DeepSeek-V3-0324",
+                  score: 1206.73,
+                  rank: 8,
+                  ci: { plus: 16.75, minus: 18.20 },
+                  votes: 1097,
+                  organization: "DeepSeek",
+                  license: "MIT"
+                },
+                {
+                  model: "DeepSeek-R1",
+                  score: 1198.63,
+                  rank: 8,
+                  ci: { plus: 9.96, minus: 8.79 },
+                  votes: 3760,
+                  organization: "DeepSeek",
+                  license: "MIT"
+                },
+                {
+                  model: "GPT-4.1-mini-2025-04-14",
+                  score: 1185.77,
+                  rank: 8,
+                  ci: { plus: 9.95, minus: 9.58 },
+                  votes: 3417,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "o3-2025-04-16",
+                  score: 1188.12,
+                  rank: 8,
+                  ci: { plus: 9.22, minus: 10.53 },
+                  votes: 4209,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Qwen3-235B-A22B",
+                  score: 1181.76,
+                  rank: 8,
+                  ci: { plus: 14.53, minus: 14.89 },
+                  votes: 2416,
+                  organization: "Alibaba",
+                  license: "Apache 2.0"
+                },
+                {
+                  model: "o3-mini-high (20250131)",
+                  score: 1136.29,
+                  rank: 8,
+                  ci: { plus: 12.73, minus: 11.46 },
+                  votes: 2984,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                // Rank 10：
+                {
+                  model: "Mistral Medium 3",
+                  score: 1163.82,
+                  rank: 10,
+                  ci: { plus: 15.56, minus: 14.61 },
+                  votes: 1840,
+                  organization: "Mistral",
+                  license: "Proprietary"
+                },
+                // Rank 13：（并列）
+                {
+                  model: "Gemini-2.5-Flash-Preview-04-17",
+                  score: 1143.60,
+                  rank: 13,
+                  ci: { plus: 12.49, minus: 12.55 },
+                  votes: 3262,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "early-grok-3",
+                  score: 1142.79,
+                  rank: 13,
+                  ci: { plus: 8.19, minus: 7.79 },
+                  votes: 6284,
+                  organization: "xAI",
+                  license: "Proprietary"
+                },
+                // Rank 14：
+                {
+                  model: "Claude 3.5 Haiku (20241022)",
+                  score: 1132.96,
+                  rank: 14,
+                  ci: { plus: 4.88, minus: 4.34 },
+                  votes: 21639,
+                  organization: "Anthropic",
+                  license: "Proprietary"
+                },
+                // Rank 18：（并列多個）
+                {
+                  model: "o1 (20241217)",
+                  score: 1044.91,
+                  rank: 18,
+                  ci: { plus: 7.04, minus: 7.61 },
+                  votes: 9271,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "o1-mini (20240912)",
+                  score: 1041.86,
+                  rank: 18,
+                  ci: { plus: 6.63, minus: 7.17 },
+                  votes: 13828,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "o4-mini (2025-04-16)",
+                  score: 1099.90, //—在表中第四行已經出现，但此處稍作校正，保持唯一条目
+                  rank: 18,
+                  ci: { plus: 10.18, minus: 9.70 },
+                  votes: 2911,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "o3-mini (20250131)",
+                  score: 1091.72,
+                  rank: 18,
+                  ci: { plus: 9.35, minus: 9.03 },
+                  votes: 6391,
+                  organization: "OpenAI",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Gemini-2.0-Pro-Exp-02-05",
+                  score: 1088.87,
+                  rank: 18,
+                  ci: { plus: 5.57, minus: 5.45 },
+                  votes: 11936,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                // Rank 21：（并列多個）
+                {
+                  model: "Gemini-2.0-Flash-001",
+                  score: 1039.87,
+                  rank: 21,
+                  ci: { plus: 5.78, minus: 6.52 },
+                  votes: 10533,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Gemini-2.0-Flash-Thinking-01-21",
+                  score: 1029.63,
+                  rank: 21,
+                  ci: { plus: 17.99, minus: 22.64 },
+                  votes: 1064,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Llama-4-Maverick-17B-128E-Instruct",
+                  score: 1025.01,
+                  rank: 22,
+                  ci: { plus: 10.26, minus: 9.10 },
+                  votes: 5164,
+                  organization: "Meta",
+                  license: "Llama 4"
+                },
+                {
+                  model: "Gemini-2.0-Flash-Exp",
+                  score: 980.25,
+                  rank: 26,
+                  ci: { plus: 6.06, minus: 5.50 },
+                  votes: 14485,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Qwen2.5-Max",
+                  score: 974.97,
+                  rank: 26,
+                  ci: { plus: 7.96, minus: 6.73 },
+                  votes: 11110,
+                  organization: "Alibaba",
+                  license: "Proprietary"
+                },
+                {
+                  model: "DeepSeek-V3",
+                  score: 959.80,
+                  rank: 27,
+                  ci: { plus: 7.66, minus: 8.24 },
+                  votes: 7717,
+                  organization: "DeepSeek",
+                  license: "DeepSeek"
+                },
+                {
+                  model: "Qwen2.5-Coder-32B-Instruct",
+                  score: 902.28,
+                  rank: 30,
+                  ci: { plus: 5.46, minus: 6.50 },
+                  votes: 16252,
+                  organization: "Alibaba",
+                  license: "Apache 2.0"
+                },
+                {
+                  model: "Llama-4-Scout-17B-16E-Instruct",
+                  score: 899.91,
+                  rank: 30,
+                  ci: { plus: 25.95, minus: 27.43 },
+                  votes: 692,
+                  organization: "Meta",
+                  license: "Llama 4"
+                },
+                {
+                  model: "Gemini-1.5-Pro-002",
+                  score: 892.51,
+                  rank: 30,
+                  ci: { plus: 5.48, minus: 5.69 },
+                  votes: 15201,
+                  organization: "Google",
+                  license: "Proprietary"
+                },
+                {
+                  model: "Llama-3.1-405B-Instruct",
+                  score: 809.70,
+                  rank: 33,
+                  ci: { plus: 18.48, minus: 17.94 },
+                  votes: 1117,
+                  organization: "Meta",
+                  license: "Llama 3.1"
+                }
+              ],
+            note: '排名越低越好。衡量創建功能性網頁應用的能力。(2025 年 6 月 3 號早上 9 點 22 分截取)'
         },
         'MMLU': {
             label: 'MMLU (通用知識)',
             data: [
                 { model: 'Mistral Medium 3', score: 85.6 },
+                { model: 'Claude Sonnet 4', score: 83.4 },
+                { model: 'OpenAI GPT-4.1', score: 86.4 },
+                { model: 'Gemini 2.5 Pro', score: 90.0 }
             ],
             note: '分數越高越好。衡量模型的綜合知識水平。'
         },
@@ -234,6 +533,9 @@ export const llmData = {
             label: 'HumanEval (程式編寫)',
             data: [
                 { model: 'Mistral Medium 3', score: 80.1 },
+                { model: 'Claude Sonnet 4', score: 86 },
+                { model: 'OpenAI Operator (o3)', score: 80 },
+                { model: 'Gemini 2.5 Pro', score: 99 }
             ],
             note: '分數越高越好。'
         },

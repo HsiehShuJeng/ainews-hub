@@ -24,12 +24,37 @@ export function initApp() {
             content.classList.toggle('hidden', content.id !== tabName);
         });
         
-        if(tabName === 'performance' && !performanceChart) {
-            initPerformanceChart();
-        } else if (tabName === 'performance' && performanceChart) {
-            // Ensure chart is updated if data changed while tab was hidden
-             const selector = document.getElementById('benchmark-selector');
-             updatePerformanceChart(selector.value);
+        if (tabName === 'performance') {
+            const selector = document.getElementById('benchmark-selector');
+            if (!performanceChart && selector) { // Check selector exists before init
+                initPerformanceChart(); // Sets up selector & basic chart shell
+            }
+            
+            if (selector) { 
+                let benchmarkToLoad = selector.value;
+                // If no value is selected, and benchmarks exist, pick the first one as default
+                if (!benchmarkToLoad && llmData.benchmarks && Object.keys(llmData.benchmarks).length > 0) {
+                    benchmarkToLoad = Object.keys(llmData.benchmarks)[0];
+                    selector.value = benchmarkToLoad; // Update selector to reflect the default
+                }
+
+                if (benchmarkToLoad) {
+                    updatePerformanceChart(benchmarkToLoad);
+                } else if (llmData.benchmarks && Object.keys(llmData.benchmarks).length === 0) {
+                    // Handle case where there are no benchmarks at all
+                     const ctx = document.getElementById('performance-chart').getContext('2d');
+                     if (performanceChart) performanceChart.destroy();
+                     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                     ctx.font = "16px 'Noto Sans TC', sans-serif";
+                     ctx.fillStyle = "#6b7280";
+                     ctx.textAlign = "center";
+                     ctx.fillText("無可用基準測試數據。", ctx.canvas.width / 2, ctx.canvas.height / 2);
+                } else {
+                    console.warn("Performance tab: No benchmark selected and no default could be determined, or selector not ready.");
+                }
+            } else {
+                console.error("Benchmark selector not found when switching to performance tab.");
+            }
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -333,99 +358,373 @@ export function initApp() {
         document.body.style.overflow = 'auto';
     }
 
-    function initPerformanceChart() {
-        const selector = document.getElementById('benchmark-selector');
-        selector.innerHTML = Object.entries(llmData.benchmarks).map(([key, value]) => 
-            `<option value="${key}">${value.label}</option>`
-        ).join('');
-        
-        selector.addEventListener('change', (e) => updatePerformanceChart(e.target.value));
-        
-        const ctx = document.getElementById('performance-chart').getContext('2d');
+    function getReleaseDateFromModelString(modelName) {
+        if (!modelName || typeof modelName !== 'string') {
+            // console.warn('getReleaseDateFromModelString: Invalid modelName input:', modelName);
+            return null;
+        }
+        try {
+            let match;
+
+            // Order: YYYYMMDD, YYYY-MM-DD (in parens), YYYY-MM-DD (direct), MM-DD (preview/release/exp)
+            
+            // Regex for YYYYMMDD in parentheses, e.g., "(20250514)"
+            match = modelName.match(/\((\d{4})(\d{2})(\d{2})\)/);
+            if (match && match[1] && match[2] && match[3]) {
+                const year = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10) - 1; 
+                const day = parseInt(match[3], 10);
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day) && month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+                    return new Date(year, month, day);
+                }
+            }
+
+            // Regex for YYYY-MM-DD in parentheses, e.g., "(2025-05-14)"
+            match = modelName.match(/\((\d{4})-(\d{2})-(\d{2})\)/);
+            if (match && match[1] && match[2] && match[3]) {
+                const year = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10) - 1;
+                const day = parseInt(match[3], 10);
+                 if (!isNaN(year) && !isNaN(month) && !isNaN(day) && month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+                    return new Date(year, month, day);
+                }
+            }
+            
+            // Regex for YYYY-MM-DD directly in name, e.g., "GPT-4.1-2025-04-14"
+            match = modelName.match(/(\d{4})-(\d{2})-(\d{2})/);
+            if (match && match[1] && match[2] && match[3]) {
+                const year = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10) - 1;
+                const day = parseInt(match[3], 10);
+                if (!isNaN(year) && !isNaN(month) && !isNaN(day) && month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+                    return new Date(year, month, day);
+                }
+            }
+
+            const mmDdPattern = /(\d{2})-(\d{2})/; 
+            const modelNameLower = modelName.toLowerCase();
+            
+            if (modelNameLower.includes("preview") || modelNameLower.includes("release") || modelNameLower.includes("exp") || modelNameLower.includes("mini")) {
+                match = modelName.match(mmDdPattern);
+                if (match && match[1] && match[2]) {
+                    const year = 2025; 
+                    const month = parseInt(match[1], 10) - 1;
+                    const day = parseInt(match[2], 10);
+                    if (!isNaN(month) && !isNaN(day) && month >= 0 && month <= 11 && day >= 1 && day <= 31) {
+                         return new Date(year, month, day);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(`Error parsing date from model name "${modelName}":`, e);
+            return null;
+        }
+        // console.warn('getReleaseDateFromModelString: No date pattern matched for:', modelName);
+        return null;
+    }
+
+    function renderWebDevArenaChart(ctx, benchmarkData, benchmarkKey) {
+        const may2025Models = benchmarkData.data.filter(item => {
+            const releaseDate = getReleaseDateFromModelString(item.model);
+            // Ensure releaseDate is a valid Date object before calling getFullYear/getMonth
+            return releaseDate instanceof Date && !isNaN(releaseDate) &&
+                   releaseDate.getFullYear() === 2025 && 
+                   releaseDate.getMonth() === 4; // 4 for May
+        });
+
+        if (may2025Models.length === 0) {
+            if (performanceChart) performanceChart.destroy();
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = "16px 'Noto Sans TC', sans-serif";
+            ctx.fillStyle = "#6b7280";
+            ctx.textAlign = "center";
+            ctx.fillText("無符合條件 (2025年5月發布) 的 WebDev Arena 模型數據。", ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return;
+        }
+
+        may2025Models.sort((a, b) => {
+            if (a.rank !== b.rank) {
+                return a.rank - b.rank; // Sort by rank ascending
+            }
+            return b.score - a.score; // Then by score descending
+        });
+
+        const labels = may2025Models.map(item => item.model);
+        const scores = may2025Models.map(item => item.score);
+
         performanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: [],
+                labels: labels,
                 datasets: [{
-                    label: '',
-                    data: [],
-                    backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                    borderColor: 'rgba(79, 70, 229, 1)',
+                    label: benchmarkData.label + ' (Elo Score - Higher is Better)',
+                    data: scores,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true, // Or a more dynamic min based on data
+                        title: {
+                            display: true,
+                            text: 'Elo Score'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Model (Filtered for May 2025 Releases)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: benchmarkData.label
+                    },
+                    subtitle: {
+                        display: true,
+                        text: benchmarkData.note + ' | Showing May 2025 releases only. Sorted by Rank, then Score.'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const item = may2025Models[context.dataIndex];
+                                let tooltipLabel = [];
+                                tooltipLabel.push(`Model: ${item.model}`);
+                                tooltipLabel.push(`Elo Score: ${item.score}`);
+                                tooltipLabel.push(`Rank: ${item.rank}`);
+                                if (item.ci) {
+                                    tooltipLabel.push(`CI: ±${((item.ci.plus + item.ci.minus) / 2).toFixed(2)} (approx)`);
+                                }
+                                tooltipLabel.push(`Votes: ${item.votes || 'N/A'}`);
+                                tooltipLabel.push(`Organization: ${item.organization || 'N/A'}`);
+                                tooltipLabel.push(`License: ${item.license || 'N/A'}`);
+                                return tooltipLabel;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderBenchmarkSuiteRadarChart(ctx, benchmarkData, benchmarkKey) {
+        const labels = benchmarkData.data.map(item => {
+            const match = item.model.match(/\(([^)]+)\)$/); 
+            return (match && match[1]) ? match[1] : item.model;
+        });
+        const scores = benchmarkData.data.map(item => item.score);
+
+        performanceChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: benchmarkData.label,
+                    data: scores,
+                    fill: true,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(54, 162, 235)'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: '#374151' },
-                        grid: { color: '#E5E7EB' }
+                plugins: {
+                    title: {
+                        display: true,
+                        text: benchmarkData.label
                     },
-                    x: {
-                        ticks: { 
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 45,
-                            color: '#374151',
-                            callback: function(value) {
-                                const label = this.getLabelForValue(value);
-                                if (label.length > 16) {
-                                    return label.substring(0, 16) + '...';
-                                }
-                                return label;
-                            }
-                        },
-                        grid: { display: false }
+                    subtitle: {
+                        display: true,
+                        text: benchmarkData.note
+                    },
+                },
+                elements: {
+                    line: {
+                        borderWidth: 3
                     }
                 },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        titleFont: { weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        footerFont: { style: 'italic' },
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        titleColor: '#FFFFFF',
-                        bodyColor: '#FFFFFF',
-                        footerColor: '#CCCCCC',
-                        callbacks: {
-                            footer: function(tooltipItems) {
-                               const benchmarkKey = document.getElementById('benchmark-selector').value;
-                               return llmData.benchmarks[benchmarkKey].note;
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0, 
+                        // suggestedMax: 100 (can be set if scores are % based)
+                         pointLabels: {
+                            font: {
+                                size: 10 // Adjust as needed
                             }
                         }
-                    },
-                     title: {
-                        display: true,
-                        text: '',
-                        font: { size: 16, weight: 'bold'},
-                        color: '#1F2937'
                     }
                 }
             }
         });
+    }
 
-        updatePerformanceChart(selector.value);
+    function renderDefaultBarChart(ctx, benchmarkData, benchmarkKey) {
+        // Default assumption: higher score is better. If a benchmark has lower = better, it might need special handling here.
+        const sortedData = [...benchmarkData.data].sort((a, b) => b.score - a.score);
+        
+        const labels = sortedData.map(item => item.model);
+        const scores = sortedData.map(item => item.score);
+
+        performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: benchmarkData.label,
+                    data: scores,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'x', // Vertical bars
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                         title: {
+                            display: true,
+                            text: 'Score'
+                        }
+                    },
+                     x: {
+                        title: {
+                            display: true,
+                            text: 'Model'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: benchmarkData.label
+                    },
+                    subtitle: {
+                        display: true,
+                        text: benchmarkData.note
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function initPerformanceChart() {
+        const selector = document.getElementById('benchmark-selector');
+        if (!selector) {
+            console.error("CRITICAL: Performance benchmark selector not found in DOM during initPerformanceChart.");
+            return; // Stop if selector doesn't exist
+        }
+
+        // Populate selector only if it's empty, to avoid re-populating if already done
+        if (selector.options.length === 0 && llmData.benchmarks && Object.keys(llmData.benchmarks).length > 0) {
+            selector.innerHTML = Object.entries(llmData.benchmarks).map(([key, value]) => 
+                `<option value="${key}">${value.label}</option>`
+            ).join('');
+        } else if (selector.options.length === 0) {
+             console.warn("No benchmarks available to populate selector.");
+        }
+        
+        // Remove existing listener before adding a new one to prevent duplicates
+        // This requires storing the listener function if we want to remove it by reference,
+        // or simply re-assigning onchange if it's simple enough.
+        // For now, let's assume addEventListener handles duplicates gracefully or this init is truly once.
+        // A more robust way is to have a flag or remove the specific listener.
+        // However, given this is init, it should ideally run once.
+        // Let's ensure it can be called multiple times without adding multiple listeners if `performanceChart` check in `switchTab` fails.
+        // A simple way:
+        if (!selector.hasPerformanceChartListener) {
+            selector.addEventListener('change', (e) => {
+                // Check if the performance tab is active before updating
+                const performanceTab = document.getElementById('performance');
+                if (performanceTab && !performanceTab.classList.contains('hidden')) {
+                     updatePerformanceChart(e.target.value);
+                }
+            });
+            selector.hasPerformanceChartListener = true; // Mark that listener is attached
+        }
+        
+        const ctx = document.getElementById('performance-chart').getContext('2d');
+        if (performanceChart) {
+            performanceChart.destroy();
+        }
+        // Create a very simple, empty chart shell.
+        performanceChart = new Chart(ctx, { 
+            type: 'bar', 
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: { 
+                        display: true, 
+                        text: '請從上方選擇一個基準測試 (Please select a benchmark from above)' 
+                    },
+                    legend: { display: false }
+                },
+                scales: { 
+                    x: { display: false }, 
+                    y: { display: false }
+                }
+            }
+        });
+        // The actual data loading and chart rendering is deferred to updatePerformanceChart,
+        // which is called by switchTab when the performance tab becomes active.
     }
     
     function updatePerformanceChart(benchmarkKey) {
-        if (!performanceChart || !llmData.benchmarks[benchmarkKey]) {
-             console.warn("Chart or benchmark data not ready for key:", benchmarkKey);
-             return;
+        if (performanceChart) {
+            performanceChart.destroy();
         }
-        const benchmarkData = llmData.benchmarks[benchmarkKey];
-        
-        const isRank = benchmarkData.type === 'rank';
-        performanceChart.options.scales.y.reverse = isRank;
-        performanceChart.options.plugins.title.text = benchmarkData.label;
 
-        performanceChart.data.labels = benchmarkData.data.map(d => d.model);
-        performanceChart.data.datasets[0].data = benchmarkData.data.map(d => d.score);
-        performanceChart.update();
+        const benchmarkData = llmData.benchmarks[benchmarkKey];
+        const ctx = document.getElementById('performance-chart').getContext('2d');
+
+        if (!benchmarkData || !benchmarkData.data || benchmarkData.data.length === 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = "16px 'Noto Sans TC', sans-serif";
+            ctx.fillStyle = "#6b7280"; // gray-500
+            ctx.textAlign = "center";
+            ctx.fillText("此基準測試無可用數據。", ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return;
+        }
+        
+        if (benchmarkKey === 'WebDev Arena') {
+            renderWebDevArenaChart(ctx, benchmarkData, benchmarkKey);
+        } else if (benchmarkKey === 'Phi4_Reasoning_Benchmarks' || benchmarkKey === 'Mistral_Medium3_Additional') {
+            renderBenchmarkSuiteRadarChart(ctx, benchmarkData, benchmarkKey);
+        } else {
+            renderDefaultBarChart(ctx, benchmarkData, benchmarkKey);
+        }
     }
 
     // This function is called after DOMContentLoaded in spa/index.html

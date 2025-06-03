@@ -490,7 +490,7 @@ export function initApp() {
                     },
                     subtitle: {
                         display: true,
-                        text: benchmarkData.note + ' | Showing May 2025 releases only. Sorted by Rank, then Score.'
+                        text: benchmarkData.note + ' | 僅顯示 2025 年 5 月的發佈，並依排名和分數排序。.'
                     },
                     tooltip: {
                         callbacks: {

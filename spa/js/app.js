@@ -314,11 +314,19 @@ export function initApp() {
     }
 
     function showModal(modelId) {
-        const model = llmData.models.find(m => m.id === modelId);
+        console.log(`[showModal] Called with modelId: ${modelId}`);
+        const model = llmData.models.find(m => String(m.id) === String(modelId));
         const modalContainer = document.getElementById('modal-container');
 
-        if (!model) {
-            console.error(`Model with id ${modelId} not found.`);
+        if (model) {
+            console.log(`[showModal] Found model: ${model.name}`);
+        } else {
+            console.error(`[showModal] Model not found for ID: ${modelId}. Modal will not be shown.`);
+            return;
+        }
+
+        if (!modalContainer) {
+            console.error('[showModal] Critical: modal-container element not found in DOM!');
             return;
         }
 
@@ -361,8 +369,8 @@ export function initApp() {
         }
 
         const modalContent = `
-            <div id="model-detail-modal" class="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center p-4 z-50">
-                <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-auto p-6 max-h-[90vh] overflow-y-auto">
+            <div id="model-detail-modal" class="modal-custom-backdrop fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center p-4 z-50">
+                <div class="modal-custom-content relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-auto p-6 max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-start mb-4">
                         <h2 class="text-2xl font-bold text-gray-800">${model.name}</h2>
                         <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 transition duration-150">
@@ -384,6 +392,7 @@ export function initApp() {
         modalContainer.classList.remove('hidden');
         document.body.classList.add('overflow-hidden'); 
         document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+        console.log('[showModal] Modal displayed for', model.name);
     }
 
     function closeModal() {

@@ -12,7 +12,7 @@ export class CdkStack extends cdk.Stack {
 
     // Create the S3 bucket with a unique name based on the stack ID
     const bucket = new s3.Bucket(this, 'AiNewsBucket', {
-      bucketName: `ai-news-${cdk.Stack.of(this).stackId.toLowerCase()}`.replace(/[^a-z0-9-]/g, ''),
+      bucketName: 'ai-news-tokenawsstackid10',
       removalPolicy: cdk.RemovalPolicy.RETAIN, // Change as needed
       publicReadAccess: false
     });
@@ -61,7 +61,8 @@ export class CdkStack extends cdk.Stack {
         s3deploy.CacheControl.setPublic(),
         s3deploy.CacheControl.maxAge(cdk.Duration.days(30)),
       ],
-      prune: true,
+      prune: false,
+      exclude: ['videos/*'],
     });
     s3Deployment.handlerRole.attachInlinePolicy(new iam.Policy(this, 'S3DeploymentPolicy', {
       statements: [

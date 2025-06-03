@@ -317,8 +317,31 @@ export function initApp() {
         const model = llmData.models.find(m => m.id === modelId);
         if (!model) return;
 
-        const modalContainer = document.getElementById('modal-container');
-        modalContainer.innerHTML = `
+        let detailsHtml = '';
+        for (const key in model.details) {
+            if (key === 'official_source') {
+                if (Array.isArray(model.details[key]) && model.details[key].length > 0) {
+                    detailsHtml += `<dt class="font-semibold text-gray-700 mt-3">${key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase())}:</dt>`;
+                    model.details[key].forEach(source => {
+                        let sourceString = '';
+                        if (source.organisation) sourceString += `${source.organisation}`;
+                        if (source.year) sourceString += ` (${source.year})`;
+                        if (source.title) sourceString += `. *${source.title}*. `;
+                        else sourceString += '. ';
+                        if (source.url) {
+                            sourceString += `Available at: <a href="${source.url}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800">${source.url}</a>`;
+                        } else {
+                            sourceString += `(No URL provided)`;
+                        }
+                        detailsHtml += `<dd class="text-gray-600 ml-4 mb-1">- ${sourceString}</dd>`;
+                    });
+                }
+            } else {
+                detailsHtml += `<dt class="font-semibold text-gray-700 mt-3">${key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, a => a.toUpperCase())}:</dt><dd class="text-gray-600">${model.details[key]}</dd>`;
+            }
+        }
+
+        const modalContent = `
             <div class="modal-backdrop">
                 <div class="modal-content" id="modal-content-inner">
                     <div class="flex justify-between items-center mb-4">
@@ -332,16 +355,13 @@ export function initApp() {
                     </div>
                     <p class="mb-6 text-gray-700">${model.summary}</p>
                     <div class="space-y-4">
-                        ${Object.entries(model.details).map(([key, value]) => `
-                            <div>
-                                <h4 class="font-semibold text-gray-800">${key.replace(/_/g, ' ')}</h4>
-                                <p class="text-gray-600 whitespace-pre-wrap">${value.startsWith('http') ? `<a href="${value}" target="_blank" class="text-indigo-600 hover:underline break-all">${value}</a>` : value}</p>
-                            </div>
-                        `).join('')}
+                        ${detailsHtml}
                     </div>
                 </div>
             </div>
         `;
+        const modalContainer = document.getElementById('modal-container');
+        modalContainer.innerHTML = modalContent;
         modalContainer.classList.remove('hidden');
         document.body.style.overflow = 'hidden'; 
         

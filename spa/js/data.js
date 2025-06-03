@@ -10,7 +10,10 @@ export const llmData = {
                 '模型能力與用途': '程式編碼與指令遵循能力改進，強大對話和多輪推理能力，可用於問答、內容生成、輔助程式開發。支援多模態輸入(圖像、文字)與大上下文窗口。',
                 '效能與基準': '官方表示在開發者體驗上更進一步，對程式編寫問題的表現更強。內部測試顯示其在編碼與遵循指令的準確性上優於GPT-4o。TechCrunch報導稱有「顯著提升」。',
                 '技術創新': '強調無監督學習規模擴展並提升實用性。專注於模式匹配與大數據知識，而非刻意的逐步思考。企業應用中提供更精細控制。',
-                '官方來源': 'OpenAI 博客與幫助中心 (2025-05-14)，TechCrunch等媒體報導'
+                'official_source': [
+                    { organisation: 'OpenAI', year: 2025, title: 'OpenAI Blog/Help Center (2025-05-14)', url: 'https://openai.com/blog' },
+                    { organisation: 'TechCrunch', year: 2025, title: 'Media Report on GPT-4.1', url: 'https://techcrunch.com/' }
+                ]
             }
         },
         {
@@ -21,7 +24,11 @@ export const llmData = {
                 '模型大小與架構': '使用特製模型 `codex-1`（源自 o3 架構），在沙盒虛擬環境中運行，支援長達 30 分鐘的擴展會話。',
                 '訓練資料與方法': '透過強化學習在真實程式編寫任務中訓練，以產生符合人類風格和偏好的程式碼，並能反覆運行測試直至通過。',
                 '模型能力與用途': '解決查詢、修復錯誤、編寫新功能、測試和程式碼庫分析。能將自然語言提示轉換為程式碼，並提出附有驗證日誌的拉取請求。支援多個程式編寫任務並行處理。',
-                '官方來源': 'OpenAI News (Introducing Codex), Turing.com, Cosmico.org'
+                'official_source': [
+                    { organisation: 'OpenAI', year: 2025, title: 'OpenAI News (Introducing Codex)', url: 'https://openai.com/blog' },
+                    { organisation: 'Turing.com', year: 2025, title: 'Turing.com Report on Codex', url: 'https://turing.com/' },
+                    { organisation: 'Cosmico.org', year: 2025, title: 'Cosmico.org Report on Codex', url: 'https://cosmico.org/' }
+                ]
             }
         },
         {
@@ -32,7 +39,10 @@ export const llmData = {
                 '模型大小與架構': '基於強邏輯推理能力的 OpenAI o3 模型，是電腦使用代理（CUA）模型的應用產品。',
                 '訓練資料與方法': '經過額外的電腦使用安全資料微調，教導模型確認和拒絕決策邊界。',
                 '模型能力與用途': '執行網路任務，如填寫表單、預訂旅行、創建迷因。o3 版本增強了處理登入、彈出視窗和 CAPTCHA 的能力，提升瀏覽互動的持久性與準確性。',
-                '官方來源': 'OpenAI News (o3-o4-mini system card addendum), OpenAI Help Center'
+                'official_source': [
+                    { organisation: 'OpenAI', year: 2025, title: 'OpenAI News (o3-o4-mini system card addendum)', url: 'https://openai.com/blog' },
+                    { organisation: 'OpenAI', year: 2025, title: 'OpenAI Help Center', url: 'https://help.openai.com/' }
+                ]
             }
         },
         {
@@ -43,7 +53,10 @@ export const llmData = {
                 '模型大小與架構': '參數未公開，但前代超過 1750 億。專注於無監督學習，而非思維鏈推理。',
                 '訓練資料與方法': '專有，未公開。',
                 '模型能力與用途': '卓越的對話、多步驟推理、高效計算和即時互動。可處理圖像和音訊資料。推薦用於需要卓越對話、多步驟推理的業務場景。',
-                '官方來源': 'Shakudo.io blog, OpenAI API Deprecations'
+                'official_source': [
+                    { organisation: 'Shakudo.io', year: 2025, title: 'Shakudo.io blog', url: 'https://www.shakudo.io/blog/top-9-large-language-models' },
+                    { organisation: 'OpenAI', year: 2025, title: 'OpenAI API Deprecations', url: 'https://platform.openai.com/docs/deprecations' }
+                ]
             }
         },
         {
@@ -54,7 +67,9 @@ export const llmData = {
                 '模型大小與架構': '專有模型，建立在 Gemini 2.5 Pro 基礎上。上下文視窗從 100 萬 token 擴展至 200 萬。',
                 '訓練資料與方法': '未詳細說明。針對程式編寫和互動式網頁應用進行顯著增強。',
                 '模型能力與用途': '創建美觀且功能正常的網頁應用、轉換和編輯現有程式碼、開發複雜代理工作流程、基於影片內容創建互動應用。函數呼叫改進。',
-                '官方來源': 'Google Cloud Blog (Expanding Gemini 2.5 Flash and Pro capabilities)'
+                'official_source': [
+                    { organisation: 'Google Cloud', year: 2025, title: 'Google Cloud Blog (Expanding Gemini 2.5 Flash and Pro capabilities)', url: 'https://cloud.google.com/blog/products/ai-machine-learning/expanding-gemini-2-5-flash-and-pro-capabilities' }
+                ]
             }
         },
          {
@@ -65,7 +80,10 @@ export const llmData = {
                 '模型大小與架構': '專有模型，採用新的研究技術，包含平行思考技術。可配置高達 32K token 的思考預算。上下文窗口100萬token。',
                 '訓練資料與方法': '未詳細說明。針對複雜推理進行強化。',
                 '模型能力與用途': '針對數學和程式編寫等高度複雜的用例，增強推理能力，處理更複雜的問題和任務。內建自我事實檢查機制。',
-                '官方來源': 'Google Cloud Blog, Google DeepMind Blog (Gemini model thinking updates)'
+                'official_source': [
+                    { organisation: 'Google Cloud', year: 2025, title: 'Google Cloud Blog', url: 'https://blog.google/technology/google-deepmind/google-gemini-updates-io-2025/' },
+                    { organisation: 'Google DeepMind', year: 2025, title: 'Google DeepMind Blog (Gemini model thinking updates)', url: 'https://deepmind.google/models/gemini/pro/' }
+                ]
             }
         },
         {
@@ -76,7 +94,9 @@ export const llmData = {
                 '模型大小與架構': '專有模型，是 Gemini 的輕量化變體。',
                 '訓練資料與方法': '在保持高性能的同時優化模型大小與推理速度。',
                 '模型能力與用途': '資料分析代理、對話式 AI。支援原生音訊輸出和影音輸入，顯著降低使用成本和回應時間。',
-                '官方來源': 'Google Cloud Blog (Expanding Gemini 2.5 Flash and Pro capabilities)'
+                'official_source': [
+                    { organisation: 'Google Cloud', year: 2025, title: 'Gemini 2.5 Flash and Pro expand on Vertex AI to drive more sophisticated and secure AI innovation', url: 'https://cloud.google.com/blog/products/ai-machine-learning/expanding-gemini-2-5-flash-and-pro-capabilities' }
+                ]
             }
         },
         {
@@ -87,7 +107,9 @@ export const llmData = {
                 '模型大小與架構': '屬於 Gemma 模型家族，具體授權條款和架構尚未詳細說明。',
                 '訓練資料與方法': '專注於手語資料訓練。',
                 '模型能力與用途': '翻譯手語。被譽為迄今為止在這方面「能力最強的模型」。',
-                '官方來源': '於 Google I/O 2025 宣布'
+                'official_source': [
+                    { organisation: 'Google I/O', year: 2025, title: 'Building with AI: highlights for developers at Google I/O', url: 'https://blog.google/technology/developers/google-ai-developer-updates-io-2025/' }
+                ]
             }
         },
         {
@@ -100,29 +122,38 @@ export const llmData = {
                 '模型能力與用途': '輔助醫療文本和影像理解。放射報告生成、臨床筆記轉換總結、分診建議、醫療知識問答。4B看圖說話，27B深入臨床文本理解。',
                 '效能與基準': '放射報告生成接近專科醫生。臨床問答(HealthSearchQA)與GPT-4.5-turbo等相當。HealthBench匹敵GPT-4.5級別。4B在MURA骨骼X光分類開源最優。',
                 '技術創新': '醫療領域專精與開源。結合多模態學習與長上下文。內建隱私保護設計。選擇性激活和高效推理優化。',
-                '官方來源': 'Google開發者官方博客 (Google Releases MedGemma), Google Cloud Vertex AI, Hugging Face'
+                'official_source': [
+                    { organisation: 'Google Deep Mind', year: 2025, title: 'MedGemma', url: 'https://deepmind.google/models/gemma/medgemma/' },
+                    { organisation: 'Google Cloud Vertex AI', year: 2025, title: 'MedGemma | Health AI Developer Foundations', url: 'https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/medgemma' },
+                    { organisation: 'Hugging Face', year: 2025, title: 'google/medgemma-4b-it', url: 'https://huggingface.co/' }
+                ]
             }
         },
          {
-            id: 'claude4', name: 'Claude 4 Opus & Sonnet 4', company: 'Anthropic', type: '閉源', releaseDate: '2025-05-22',
+            id: 'claude4', name: 'Claude 4 Opus & Sonnet 4', company: 'Anthropic', type: '閉源', releaseDate: '2025-05-23',
             tags: ['程式編寫', '增強推理', '代理能力', '企業應用'],
             summary: 'Claude 系列的最新一代，Opus 4 號稱世界最佳程式編寫模型，Sonnet 4 則為 GitHub Copilot 提供支援。引入「延伸思考」與混合推理模式。',
             details: {
                 '模型大小與架構': '專有混合模型，具有近乎即時回應和「延伸思考」(extended thinking) / 混合推理模式、並行工具使用能力和改善的記憶力。上下文視窗 200k token (Opus 4)。',
                 '訓練資料與方法': '大規模互聯網文本預訓練，透過憲法式AI原則和人類反饋強化學習。引入混合推理訓練，多輪紅隊測試與安全優化。',
                 '模型能力與用途': 'Opus 4 擅長複雜問題解決、長時間任務、AI 代理、研究、寫作、科學發現，編碼能力頂尖。Sonnet 4 平衡效能與效率，具卓越程式編寫和推理能力，支援高併發應用。兩者均支援平行工具使用和增強記憶機制。Claude Code功能與IDE深度整合。',
-                '官方來源': 'Anthropic News (Introducing Claude 4), Anthropic Claude Opus 4 page'
+                'official_source': [
+                    { organisation: 'Anthropic', year: 2025, title: 'Introducing Claude 4', url: 'https://www.anthropic.com/news/claude-4' },
+                    { organisation: 'Anthropic', year: 2025, title: 'A day with Claude', url: 'https://youtu.be/oqUclC3gqKs?si=DRQc7Y8z9qM5PFZx' }
+                ]
             }
         },
         {
-            id: 'mistral_agents_api', name: 'Mistral Agents API', company: 'Mistral AI', type: '混合', releaseDate: '2025-05-28',
+            id: 'mistral_agents_api', name: 'Mistral Agents API', company: 'Mistral AI', type: '混合', releaseDate: '2025-05-27',
             tags: ['代理能力', 'API'],
             summary: '一個簡化 AI 代理開發的 API，內建多種工具連接器（程式碼執行、圖像生成、網路搜尋），並支援代理協調以處理複雜問題。',
             details: {
                 '模型大小與架構': '結合專有模型 (Medium 3) 和開源模型 (Devstral) 作為代理的「大腦」。',
                 '訓練資料與方法': 'N/A (API 產品)',
                 '模型能力與用途': '支援程式碼執行、圖像生成、網路搜尋。具備持久記憶體和對話分支功能，旨在降低開發者建構複雜 AI 代理的門檻。',
-                '官方來源': 'Mistral AI Docs (Changelog)'
+                'official_source': [
+                    { organisation: 'Mistral AI', year: 2025, title: 'Build AI agents with the Mistral Agents API', url: 'https://mistral.ai/news/agents-api' }
+                ]
             }
         },
         {
@@ -133,7 +164,9 @@ export const llmData = {
                 '模型大小與架構': '專用嵌入模型，可將程式碼轉換為數值向量表示。最大 token 限制 8k。',
                 '訓練資料與方法': '專為程式碼訓練。',
                 '模型能力與用途': '檢索增強生成 (RAG)、語義程式碼搜尋、程式碼相似性檢測、重複檢測、語義聚類。聲稱效能優於多個現有模型。',
-                '官方來源': 'Mistral AI News (Codestral Embed)'
+                'official_source': [
+                    { organisation: 'Mistral AI', year: 2025, title: 'Codestral Embed', url: 'https://mistral.ai/news/codestral-embed' }
+                ]
             }
         },
         {
@@ -144,7 +177,11 @@ export const llmData = {
                 '模型大小與架構': '240 億參數，基於 Mistral Small 3.1 架構微調（移除視覺部分）。上下文視窗 128k token。Apache 2.0 授權。',
                 '訓練資料與方法': '使用約2.5萬對 GitHub Issue 與對應代碼修改的資料進行微調 (SWE-Bench資料集)。採用 agentic 框架 (OpenHands) 訓練。',
                 '模型能力與用途': '使用工具探索程式碼庫、編輯多文件、提出錯誤修復/新功能建議、自動化軟體工程生命週期。可在單卡GPU運行。',
-                '官方來源': 'Mistral AI News (Devstral), Kaggle Model Card, InfoQ News'
+                'official_source': [
+                    { organisation: 'Mistral AI', year: 2025, title: 'Devstral', url: 'https://mistral.ai/news/devstral' },
+                    { organisation: 'Kaggle', year: 2025, title: 'Devstral-Small-2505 - Mistral AI', url: 'https://www.kaggle.com/models/mistral-ai/devstral-small-2505' },
+                    { organisation: 'InfoQ', year: 2025, title: 'Mistral Releases Devstral, an Open-Source LLM for Software Engineering Agents', url: 'https://www.infoq.com/news/2025/05/mistral-devstral-agentic/' }
+                ]
             }
         },
         {
@@ -157,7 +194,11 @@ export const llmData = {
                 '模型能力與用途': '文件分析、摘要、對話、函數呼叫、代理工作流程。支援程式編寫(80+語言)、數理推理。可本地私有或雲端運行。',
                 '效能與基準': 'MMLU (85.6%), GSM8K (91.9%), HumanEval (80.1%), MBPP (82.6%), MMMU (66.1%), DocVQA (95.3%), AI2D (93.7%), ChartQA (82.6%)。聲稱效能達頂尖模型90%以上，成本僅1/8。',
                 '技術創新': '高效率架構，以中等規模實現接近巨型模型的性能。易部署性。',
-                '官方來源': 'Mistral AI News (Medium is the new large), GitHub Models project, NVIDIA Build Model Card'
+                'official_source': [
+                    { organisation: 'Mistral AI', year: 2025, title: 'Medium is the new large.', url: 'https://mistral.ai/news/mistral-medium-3' },
+                    { organisation: 'GitHub', year: 2025, title: 'Mistral Medium 3 (25.05) is now generally available', url: 'https://github.com/marketplace/models/azureml-mistral/mistral-medium-2505' },
+                    { organisation: 'NVIDIA Build', year: 2025, title: 'mistral-medium-3-instruct Model by Mistral AI', url: 'https://build.nvidia.com/mistralai/mistral-medium-3-instruct/modelcard' }
+                ]
             }
         },
         {
@@ -170,7 +211,10 @@ export const llmData = {
                 '模型能力與用途': '複雜推理、數學、科學問答、程式編寫。輸出隱含推理過程。內建JSON函數調用結構。',
                 '效能與基準': 'AIME: 81.3, GPQA-Diamond: 78.0, LiveCodeBench: 68.9, IFEval: 84.9, ArenaHard: 79.0. 在Toxigen敏感內容基準表現良好。',
                 '技術創新': '透明鏈式推理，雙階段輸出格式，高品質CoT資料微調結合強化學習，內建工具調用。',
-                '官方來源': 'Hugging Face (microsoft/Phi-4-Reasoning-Plus)，Mahmoud Rabie LinkedIn報導'
+                'official_source': [
+                    { organisation: 'Hugging Face', year: 2025, title: 'One year of Phi: Small language models making big leaps in AI', url: 'https://azure.microsoft.com/en-us/blog/one-year-of-phi-small-language-models-making-big-leaps-in-ai/' },
+                    { organisation: 'LinkedIn', year: 2025, title: 'Post by Mahmoud Rabie', url: 'https://www.linkedin.com/posts/mahmoudrabie2004_opensourcellms-didyouknowthat-favikon-activity-7323902965881155584-Kbwd/' }
+                ]
             }
         },
         {
@@ -183,7 +227,30 @@ export const llmData = {
                 '模型能力與用途': '一般問答、數學推理、編程、規劃任務。擴散模型特有的全局約束考慮能力。任意順序生成，可調節擴散步驟。',
                 '效能與基準': '整體表現大幅超越先前擴散式文本模型。與LLaMA3-8B、Qwen2.5-7B相當或更好。規劃任務上超越同規模AR模型，甚至擊敗DeepSeek V3。',
                 '技術創新': '將擴散模型引入LLM並取得競爭性成果。結合AR與擴散優點。任意順序解碼和可調節步驟。上下文自適應加噪。',
-                '官方來源': '香港大學NLP集團官方博客 (Introducing Dream 7B)，GitHub (Dream-org)，Hugging Face'
+                'official_source': [
+                    { organisation: 'HKU NLP Group', year: 2025, title: 'Introducing Dream 7B', url: 'https://hkunlp.github.io/blog/2025/dream/?ref=producthunt' },
+                    { organisation: 'GitHub', year: 2025, title: 'Dream-org on GitHub', url: 'https://github.com/HKUNLP/Dream' },
+                    { organisation: 'Hugging Face', year: 2025, title: 'Dream 7B on Hugging Face', url: 'https://huggingface.co/Dream-org/Dream-v0-Instruct-7B' }
+                ]
+            }
+        },
+        {
+            id: 'google_veo_3',
+            name: 'Google Veo 3',
+            company: 'Google DeepMind',
+            type: '閉源',
+            releaseDate: '2025-05-20',
+            tags: ['多模態', '影片生成', '創意工具', 'AI電影製作'],
+            summary: 'Google 最先進的影片生成模型，整合於 Flow AI 電影製作工具，旨在賦予電影製作人和故事創作者強大的創意控制、提示遵循度和真實感，Veo 3 更支援原生音訊生成。',
+            details: {
+                '模型大小與架構': '最先進的影片生成模型。Veo 3 版本支援高達 4K 解析度輸出與原生音訊生成。透過 Flow 工具提供。',
+                '訓練資料與方法': '基於 Google DeepMind 在生成模型上的研究，具體訓練細節未公開。',
+                '模型能力與用途': '根據文字、圖像提示生成高品質影片。提供細膩的電影風格控制、角色一致性維持、場景建構、風格轉換、原生音訊（包含音效與對白）生成等功能。主要透過 Flow AI 電影製作工具進行創作。',
+                '技術創新': '顯著提升生成影片的真實感、物理模擬準確度與提示理解能力。Veo 3 新增原生音訊生成。Flow 工具提供進階攝影機控制、參考圖像引導生成、影片風格遷移、物件添加/移除、內容擴展繪製 (outpainting) 等專業功能。',
+                'official_source': [
+                    { organisation: 'Google DeepMind', year: 2025, title: 'Veo - Our state-of-the-art video generation model', url: 'https://deepmind.google/models/veo/' },
+                    { organisation: 'Google Blog', year: 2025, title: 'Meet Flow: AI-powered filmmaking with Veo 3', url: 'https://blog.google/technology/ai/google-flow-veo-ai-filmmaking-tool/' }
+                ]
             }
         },
         {
@@ -196,7 +263,11 @@ export const llmData = {
                 '模型能力與用途': '自動將PyTorch程式碼轉換成Triton GPU kernel，優化深度學習模型執行效率。簡化GPU編程。',
                 '效能與基準': 'KernelBench-Triton單輪模式下超越GPT-4o和DeepSeek V3。多輪互動超越DeepSeek R1。',
                 '技術創新': '首個GPU Kernel生成專用LLM。微調於外部代碼對。引入單元測試驗證。高效壓縮大模型知識的方法。',
-                '官方來源': 'Hugging Face (facebook/KernelLLM)，Meta工程博客，LinkedIn報導'
+                'official_source': [
+                    { organisation: 'Hugging Face', year: 2025, title: 'facebook/KernelLLM', url: 'https://huggingface.co/facebook/KernelLLM' },
+                    { organisation: 'Meta Engineering Blog', year: 2025, title: 'Meta Engineering Blog on KernelLLM', url: 'https://engineering.fb.com/category/ai-research/' },
+                    { organisation: 'LinkedIn', year: 2025, title: 'LinkedIn Report on KernelLLM', url: 'https://www.linkedin.com/' }
+                ]
             }
         }
     ],

@@ -355,7 +355,7 @@ export function initApp() {
             detailsHtml += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">`;
             model.details.demoVideos.forEach((video, index) => {
                 detailsHtml += `
-                    <div class="cursor-pointer group relative" data-video-url="${video.videoUrl}" onclick="playDemoVideo('${video.videoUrl}', '${video.name}')">
+                    <div class="cursor-pointer group relative video-thumbnail" data-video-url="${video.videoUrl}" data-video-name="${video.name}">
                         <img src="${video.thumbnailUrl}" alt="${video.name}" class="w-full h-24 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-200">
                         <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 flex items-center justify-center rounded-lg transition-opacity duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white opacity-80 group-hover:opacity-100" viewBox="0 0 20 20" fill="currentColor">
@@ -391,8 +391,85 @@ export function initApp() {
         modalContainer.innerHTML = modalContent;
         modalContainer.classList.remove('hidden');
         document.body.classList.add('overflow-hidden'); 
-        document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+        
+        // Add close modal event listener
+        const closeBtn = document.getElementById('close-modal-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeModal);
+        }
+        
+        // Add event listeners for video thumbnails using event delegation
+        const modalElement = document.getElementById('model-detail-modal');
+        if (modalElement) {
+            modalElement.addEventListener('click', (e) => {
+                const videoThumbnail = e.target.closest('.video-thumbnail');
+                if (videoThumbnail) {
+                    const videoUrl = videoThumbnail.dataset.videoUrl;
+                    const videoName = videoThumbnail.dataset.videoName;
+                    if (videoUrl && videoName) {
+                        playDemoVideo(videoUrl, videoName);
+                    }
+                }
+            });
+        }
+        
         console.log('[showModal] Modal displayed for', model.name);
+    }
+
+    // Move playDemoVideo function outside of showModal scope
+    function playDemoVideo(videoUrl, videoName) {
+        console.log(`[playDemoVideo] Playing video: ${videoName}, URL: ${videoUrl}`);
+        const modalContainer = document.getElementById('modal-container');
+        
+        if (!modalContainer) {
+            console.error('[playDemoVideo] Modal container not found');
+            return;
+        }
+
+        const videoModalContent = `
+            <div id="video-player-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60]">
+                <div class="relative bg-white rounded-lg shadow-xl max-w-3xl w-full mx-auto p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xl font-semibold text-gray-800">${videoName}</h3>
+                        <button id="close-video-player-btn" class="text-gray-500 hover:text-gray-700 transition duration-150">
+                            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div class="w-full"> 
+                        <video src="${videoUrl}" controls preload="metadata" muted autoplay class="w-full h-auto max-h-96 rounded"></video>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">正在播放: ${videoName}. 您可能需要允許自動播放或點擊播放按鈕。</p>
+                </div>
+            </div>
+        `;
+
+        // Create and append video modal
+        const videoPlayerElement = document.createElement('div');
+        videoPlayerElement.innerHTML = videoModalContent;
+        const videoPlayerModal = videoPlayerElement.firstElementChild;
+        modalContainer.appendChild(videoPlayerModal);
+        
+        // Add close video player event listener
+        const closeVideoBtn = videoPlayerModal.querySelector('#close-video-player-btn');
+        if (closeVideoBtn) {
+            closeVideoBtn.addEventListener('click', () => {
+                console.log('[playDemoVideo] Closing video player');
+                videoPlayerModal.remove();
+                // If no other modals, hide the container
+                if (modalContainer.children.length === 1) { // Only the main modal remains
+                    // Don't close the main modal, just remove video player
+                }
+            });
+        }
+        
+        // Also allow clicking outside video to close
+        videoPlayerModal.addEventListener('click', (e) => {
+            if (e.target === videoPlayerModal) {
+                closeVideoBtn.click();
+            }
+        });
+        
+        console.log('[playDemoVideo] Video player opened');
     }
 
     function closeModal() {
@@ -773,51 +850,4 @@ export function initApp() {
 
     // This function is called after DOMContentLoaded in spa/index.html
     initAppComponents();
-}
-
-// Existing playDemoVideo function (if any) should be updated or this is a new one.
-// Ensure this function is defined in the global scope or exported if app.js is a module and this is called from inline HTML.
-window.playDemoVideo = function(videoUrl, videoName) {
-    const modalContainer = document.getElementById('modal-container');
-    
-    // Create a new modal for the video player
-    const videoModalContent = `
-        <div id="video-player-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60]">
-            <div class="relative bg-white rounded-lg shadow-xl max-w-3xl w-full mx-auto p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xl font-semibold text-gray-800">${videoName}</h3>
-                    <button id="close-video-player-btn" class="text-gray-500 hover:text-gray-700 transition duration-150">
-                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-                <div class="aspect-w-16 aspect-h-9"> 
-                    <video src="${videoUrl}" controls autoplay class="w-full h-full rounded"></video>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">正在播放: ${videoName}. 您可能需要允許自動播放或點擊播放按鈕。</p>
-            </div>
-        </div>
-    `;
-
-    // Append to modal container - allows multiple modals if needed, though only one video player at a time is expected.
-    const videoPlayerElement = document.createElement('div');
-    videoPlayerElement.innerHTML = videoModalContent;
-    modalContainer.appendChild(videoPlayerElement.firstChild);
-    
-    // Ensure the main modal container is visible if it was hidden
-    modalContainer.classList.remove('hidden');
-    // Optional: Keep body scroll locked if it was already
-    // document.body.classList.add('overflow-hidden'); 
-
-    document.getElementById('close-video-player-btn').addEventListener('click', () => {
-        const videoPlayerModal = document.getElementById('video-player-modal');
-        if (videoPlayerModal) {
-            videoPlayerModal.remove();
-        }
-        // If no other modals are open (e.g. detail modal is closed), then unhide body scroll.
-        // This simple check assumes only one detail modal and one video player modal.
-        if (modalContainer.children.length === 0) {
-            modalContainer.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-    });
 } 

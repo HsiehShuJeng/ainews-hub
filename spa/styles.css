@@ -12,7 +12,72 @@ body {
     border-bottom-color: transparent;
     color: #6B7280;
 }
-.modal-backdrop {
-    position: fixed;
-    /* ... add your modal styles ... */
+
+/* Modal styles primarily for animations */
+/* Base styling (position, bg, padding etc. is handled by Tailwind classes in app.js) */
+.modal-custom-backdrop {
+    /* z-index is z-50 from Tailwind on the element itself */
+    animation: fadeInBackdrop 0.3s ease-out;
+}
+
+.modal-custom-content {
+    /* Base styles like bg, padding, shadow, etc. are on the element via Tailwind */
+    animation: slide-up 0.3s ease-out;
+}
+
+@keyframes fadeInBackdrop {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 400px;
+    max-height: 50vh;
+}
+.trend-card {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.trend-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.tech-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+    border: 1px dashed #D1D5DB;
+}
+.tech-diagram-box {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+.tech-diagram-arrow {
+    font-size: 1.5rem;
+    color: #9CA3AF;
+    margin: 0 1rem;
 }

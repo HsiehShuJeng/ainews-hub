@@ -6,11 +6,13 @@ let activeFilters = {
     type: [],
     tags: []
 };
+let currentSearchTerm = '';
 
 export function initApp() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contentTabs = document.querySelectorAll('.content-tab');
     const trendCards = document.querySelectorAll('.trend-card');
+    const modelSearchInput = document.getElementById('model-search-input');
     
     function switchTab(tabName) {
         tabs.forEach(tab => {
@@ -46,6 +48,27 @@ export function initApp() {
             renderModelExplorer(); 
         });
     });
+
+    if (modelSearchInput) {
+        modelSearchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value.trim().toLowerCase();
+            if (currentSearchTerm) {
+                activeFilters = { company: [], type: [], tags: [] };
+                 document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.remove('bg-indigo-500', 'text-white');
+                    b.classList.add('bg-gray-200', 'text-gray-700');
+                 });
+                 const allBtn = document.querySelector('[data-filter-type="all"]');
+                 if (allBtn) {
+                    allBtn.classList.add('active');
+                    allBtn.classList.add('bg-indigo-500', 'text-white');
+                    allBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                 }
+            }
+            renderModelExplorer();
+        });
+    }
 
     function initAppComponents() {
         switchTab('dashboard');
@@ -150,6 +173,11 @@ export function initApp() {
         const type = btn.dataset.filterType;
         const value = btn.dataset.filterValue;
 
+        currentSearchTerm = '';
+        if (document.getElementById('model-search-input')) {
+            document.getElementById('model-search-input').value = '';
+        }
+
         if (type === 'all') {
             resetFilters();
         } else {
@@ -180,6 +208,10 @@ export function initApp() {
 
     function resetFilters() {
          activeFilters = { company: [], type: [], tags: [] };
+         currentSearchTerm = '';
+         if (document.getElementById('model-search-input')) {
+            document.getElementById('model-search-input').value = '';
+         }
          document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.remove('active');
             b.classList.remove('bg-indigo-500', 'text-white');
@@ -207,12 +239,24 @@ export function initApp() {
     function renderModelExplorer() {
         const grid = document.getElementById('model-grid');
         const noResults = document.getElementById('no-results');
-        const filteredModels = llmData.models.filter(model => {
-            const companyMatch = activeFilters.company.length === 0 || activeFilters.company.includes(model.company);
-            const typeMatch = activeFilters.type.length === 0 || activeFilters.type.includes(model.type);
-            const tagMatch = activeFilters.tags.length === 0 || (model.tags && activeFilters.tags.every(t => model.tags.includes(t)));
-            return companyMatch && typeMatch && tagMatch;
-        });
+        
+        let filteredModels = llmData.models;
+
+        if (currentSearchTerm) {
+            filteredModels = filteredModels.filter(model => {
+                const nameMatch = model.name.toLowerCase().includes(currentSearchTerm);
+                const summaryMatch = model.summary.toLowerCase().includes(currentSearchTerm);
+                const companyMatch = model.company.toLowerCase().includes(currentSearchTerm);
+                return nameMatch || summaryMatch || companyMatch;
+            });
+        } else {
+            filteredModels = filteredModels.filter(model => {
+                const companyMatch = activeFilters.company.length === 0 || activeFilters.company.includes(model.company);
+                const typeMatch = activeFilters.type.length === 0 || activeFilters.type.includes(model.type);
+                const tagMatch = activeFilters.tags.length === 0 || (model.tags && activeFilters.tags.every(t => model.tags.includes(t)));
+                return companyMatch && typeMatch && tagMatch;
+            });
+        }
 
         if (filteredModels.length === 0) {
             grid.innerHTML = '';
